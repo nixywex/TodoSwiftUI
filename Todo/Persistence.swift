@@ -6,19 +6,20 @@
 //
 
 import CoreData
+import SwiftUI
 
 struct PersistenceController {
     static let shared = PersistenceController()
-
+    
     static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
-        for i in 0..<10 {
+        for i in 0..<0 {
             let newTodo = TodoEntity(context: viewContext)
             newTodo.id = UUID()
-            newTodo.deadline = Date()
+            newTodo.deadline_ = Date()
             newTodo.isDone = ((i % 2) == 0) ? true : false
-            newTodo.text = "Do a homework"
+            newTodo.text_ = "Do a homework"
         }
         do {
             try viewContext.save()
@@ -28,7 +29,7 @@ struct PersistenceController {
         }
         return result
     }()
-
+    
     let container: NSPersistentContainer
     
     var newContext: NSManagedObjectContext {
@@ -36,9 +37,10 @@ struct PersistenceController {
         context.persistentStoreCoordinator = container.persistentStoreCoordinator
         return context
     }
-
+    
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "Todo")
+        
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }

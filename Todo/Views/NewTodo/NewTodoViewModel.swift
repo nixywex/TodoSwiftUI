@@ -19,8 +19,8 @@ final class NewTodoViewModel: ObservableObject {
     
     func addTodo(text: String, deadline: Date) {
         let newTodo = TodoEntity(context: self.context)
-        newTodo.text = text
-        newTodo.deadline = deadline
+        newTodo.text_ = text
+        newTodo.deadline_ = deadline
         newTodo.isDone = false
         newTodo.id = UUID()
         

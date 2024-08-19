@@ -9,13 +9,14 @@ import SwiftUI
 import CoreData
 
 struct HomeView: View {
+    @Environment(\.managedObjectContext) private var viewContext
     var provider = PersistenceController.shared
     
     @State var isNewTodoSheetShowed = false
     
     var body: some View {
         NavigationStack {
-            TodosListView(provider: provider)
+            TodosListView()
                 .navigationTitle("Your todos")
                 .toolbar {
                     ToolbarItem (placement: .topBarTrailing) {
