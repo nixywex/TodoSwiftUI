@@ -11,18 +11,15 @@ struct NewTodoView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var vm: NewTodoViewModel
 
-    @State var text: String = ""
-    @State var deadline = Date()
-    
     var body: some View {
         NavigationStack {
             VStack {
                 List {
-                    Section ("Create a new task") {
-                        TextField("New task", text: $text)
+                    Section ("Create a new todo") {
+                        TextField("New todo", text: $vm.text)
                         DatePicker(
                             "Do due",
-                            selection: $deadline,
+                            selection: $vm.deadline,
                             displayedComponents: [.date]
                         )
                     }
@@ -32,11 +29,11 @@ struct NewTodoView: View {
                     ToolbarItem (placement: .topBarTrailing) {
                         Button(action: {
                             withAnimation {
-                                vm.addTodo(text: text, deadline: deadline)
+                                vm.addTodo(text: vm.text, deadline: vm.deadline)
                             }
                             dismiss()
                         }, label: {
-                            Text("Add task").bold()
+                            Text("Add todo").bold()
                         })
                     }
                     ToolbarItem(placement: .topBarLeading) {

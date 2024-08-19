@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F00FCBB62C73CA8900F45A30 /* TodoDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00FCBB52C73CA8900F45A30 /* TodoDetailsView.swift */; };
+		F00FCBB92C73CBE300F45A30 /* TodoDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00FCBB82C73CBE300F45A30 /* TodoDetailsViewModel.swift */; };
 		F04777B22C73909600A3C7FA /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04777B12C73909600A3C7FA /* Extentions.swift */; };
 		F04777B42C73984000A3C7FA /* TodoListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04777B32C73984000A3C7FA /* TodoListItemView.swift */; };
 		F08FFC362C7245BE0011A378 /* TodoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC352C7245BE0011A378 /* TodoApp.swift */; };
@@ -21,6 +23,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F00FCBB52C73CA8900F45A30 /* TodoDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailsView.swift; sourceTree = "<group>"; };
+		F00FCBB82C73CBE300F45A30 /* TodoDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailsViewModel.swift; sourceTree = "<group>"; };
 		F04777B12C73909600A3C7FA /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
 		F04777B32C73984000A3C7FA /* TodoListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListItemView.swift; sourceTree = "<group>"; };
 		F08FFC322C7245BE0011A378 /* Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,6 +50,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F00FCBB72C73CBD200F45A30 /* TodoDetails */ = {
+			isa = PBXGroup;
+			children = (
+				F00FCBB52C73CA8900F45A30 /* TodoDetailsView.swift */,
+				F00FCBB82C73CBE300F45A30 /* TodoDetailsViewModel.swift */,
+			);
+			path = TodoDetails;
+			sourceTree = "<group>";
+		};
 		F08FFC292C7245BE0011A378 = {
 			isa = PBXGroup;
 			children = (
@@ -87,6 +100,7 @@
 		F08FFC482C7295C40011A378 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F00FCBB72C73CBD200F45A30 /* TodoDetails */,
 				F08FFC4D2C7379780011A378 /* NewTodo */,
 				F08FFC372C7245BE0011A378 /* HomeView.swift */,
 				F08FFC492C7295F70011A378 /* TodosListView.swift */,
@@ -175,8 +189,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				F08FFC512C7379970011A378 /* NewTodoViewModel.swift in Sources */,
+				F00FCBB92C73CBE300F45A30 /* TodoDetailsViewModel.swift in Sources */,
 				F08FFC3F2C7245C00011A378 /* Persistence.swift in Sources */,
 				F08FFC4A2C7295F70011A378 /* TodosListView.swift in Sources */,
+				F00FCBB62C73CA8900F45A30 /* TodoDetailsView.swift in Sources */,
 				F08FFC382C7245BE0011A378 /* HomeView.swift in Sources */,
 				F04777B22C73909600A3C7FA /* Extentions.swift in Sources */,
 				F08FFC4C2C7299F20011A378 /* NewTodoView.swift in Sources */,
@@ -331,6 +347,10 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = nixywex.Todo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -360,6 +380,10 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = nixywex.Todo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

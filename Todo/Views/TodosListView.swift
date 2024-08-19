@@ -24,7 +24,7 @@ struct TodosListView: View {
                 Section("Current todos", isExpanded: $isCurrentTodosSectionExpanded) {
                     ForEach(todos) { todo in
                         NavigationLink(destination: {
-                            //TODO: TodoDetailsView
+                            TodoDetailsView(todo: todo, provider: provider)
                         }, label: {
                             TodoListItemView(todo: todo)
                                 .swipeActions {
@@ -50,7 +50,7 @@ struct TodosListView: View {
                         })
                     }
                 }
-            }
+            }.listStyle(.sidebar)
         }
     }
 }

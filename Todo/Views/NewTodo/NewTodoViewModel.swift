@@ -12,6 +12,9 @@ final class NewTodoViewModel: ObservableObject {
     private let provider: PersistenceController
     private let context: NSManagedObjectContext
     
+    @Published var text: String = ""
+    @Published var deadline = Date()
+    
     init(provider: PersistenceController) {
         self.provider = provider
         self.context = provider.newContext
