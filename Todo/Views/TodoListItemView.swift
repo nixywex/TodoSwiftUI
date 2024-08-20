@@ -6,26 +6,27 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct TodoListItemView: View {    
     @ObservedObject var todo: TodoEntity
-    @Environment(\.managedObjectContext) private var moc
+    let provider: PersistenceController
     
     var body: some View {
         HStack {
             Button(action: {
-                handleToggle()
+                self.handleToggle(todo: self.todo)
             }, label: {
-                Image(systemName: todo.isDone ? "circle.inset.filled" : "circle")
+                Image(systemName: self.todo.isDone ? "circle.inset.filled" : "circle")
                     .foregroundStyle(.blue)
                     .font(.system(size: 22))
             })
             .buttonStyle(.plain)
             .padding(.trailing, 10)
             VStack {
-                Text(todo.text)
+                Text(self.todo.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                Text(todo.deadline.formatted(.dateTime.day().month()))
+                Text(self.todo.deadline.formatted(.dateTime.day().month()))
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fontWeight(.light)
             }
@@ -35,10 +36,15 @@ struct TodoListItemView: View {
 }
 
 private extension TodoListItemView {
-    func handleToggle() {
+    func getContext(provider: PersistenceController) -> NSManagedObjectContext {
+        return provider.container.viewContext
+    }
+
+    func handleToggle(todo: TodoEntity) {
+        let context = getContext(provider: self.provider)
         todo.isDone.toggle()
         do {
-            try moc.save()
+            try self.provider.persist(in: context)
         } catch {
             print(error)
         }
@@ -46,5 +52,5 @@ private extension TodoListItemView {
 }
 
 #Preview {
-    TodoListItemView(todo: .getPreviewTodo())
+    TodoListItemView(todo: .getPreviewTodo(), provider: .preview)
 }

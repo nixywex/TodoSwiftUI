@@ -21,6 +21,13 @@ extension TodoEntity {
         return request
     }
     
+    static func getFilteredFetchRequest(isDone: Bool) -> NSFetchRequest<TodoEntity> {
+        let request: NSFetchRequest<TodoEntity> = todosFetchRequest
+        request.predicate = NSPredicate(format: "isDone == %@", NSNumber(value: isDone))
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.deadline_, ascending: true)]
+        return request
+    }
+    
     var text: String {
         get {
             text_ ?? "Error"

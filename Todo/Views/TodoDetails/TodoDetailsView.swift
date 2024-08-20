@@ -10,8 +10,9 @@ import SwiftUI
 struct TodoDetailsView: View {
     @Environment(\.dismiss) var dismiss
     
+    let provider: PersistenceController
+    
     @ObservedObject var todo: TodoEntity
-    var provider: PersistenceController
     @ObservedObject var vm: TodoDetailsViewModel
     
     init(todo: TodoEntity, provider: PersistenceController) {
@@ -49,14 +50,14 @@ struct TodoDetailsView: View {
             .navigationTitle(todo.text)
             .navigationBarTitleDisplayMode(.inline)
             .alert("Are you sure you want to delete a todo?", isPresented: $vm.isAlertShowed) {
-                            Button("Cancel", role: .cancel) {}
-                            Button("Delete", role: .destructive) {
-                                vm.handleDelete(todo: todo)
-                                dismiss()
-                            }
-                        } message: {
-                             Text("The todo cannot be restored")
-                        }
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    vm.handleDelete(todo: todo)
+                    dismiss()
+                }
+            } message: {
+                Text("The todo cannot be restored")
+            }
         }
     }
 }

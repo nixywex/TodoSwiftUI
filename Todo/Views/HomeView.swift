@@ -6,10 +6,9 @@
 //
 
 import SwiftUI
-import CoreData
 
 struct HomeView: View {
-    var provider = PersistenceController.shared
+    let provider = PersistenceController.shared
     
     @State var isNewTodoSheetShowed = false
     

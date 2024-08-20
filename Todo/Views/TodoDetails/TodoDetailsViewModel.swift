@@ -6,27 +6,38 @@
 //
 
 import Foundation
+import CoreData
 
 final class TodoDetailsViewModel: ObservableObject {
     @Published var isAlertShowed: Bool = false
     @Published var todo: TodoEntity
-    private var provider: PersistenceController
+    private let provider: PersistenceController
     
     init(todo: TodoEntity, provider: PersistenceController) {
         self.todo = todo
         self.provider = provider
     }
     
+    func getContext(provider: PersistenceController) -> NSManagedObjectContext {
+        return provider.container.viewContext
+    }
+    
     func handleSave() {
+        let context = getContext(provider: self.provider)
         do {
-            try self.provider.container.viewContext.save()
+            try self.provider.persist(in: context)
         } catch {
             print(error)
         }
     }
     
     func handleDelete(todo: TodoEntity) {
-        self.provider.container.viewContext.delete(todo)
-        self.handleSave()
+        let context = getContext(provider: self.provider)
+        do {
+            guard let existingTodo = provider.exisits(todo, in: context) else {fatalError()}
+            try self.provider.delete(existingTodo, in: context)
+        } catch {
+            print(error)
+        }
     }
 }

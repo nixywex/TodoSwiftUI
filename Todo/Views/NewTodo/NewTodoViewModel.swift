@@ -32,10 +32,9 @@ final class NewTodoViewModel: ObservableObject {
     
     private func saveChanges() {
         do {
-            try context.save()
+            try self.provider.persist(in: self.context)
         } catch {
-            let nsError = error as NSError
-            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            print(error)
         }
     }
 }

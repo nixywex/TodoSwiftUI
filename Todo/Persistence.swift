@@ -51,4 +51,25 @@ struct PersistenceController {
         })
         container.viewContext.automaticallyMergesChangesFromParent = true
     }
+    
+    func exisits(_ todo: TodoEntity, in context: NSManagedObjectContext) -> TodoEntity? {
+        try? context.existingObject(with: todo.objectID) as? TodoEntity
+    }
+    
+    func delete(_ todo: TodoEntity, in context: NSManagedObjectContext) throws {
+        if let existingTodo = exisits(todo, in: context) {
+            context.delete(existingTodo)
+            Task(priority: .background) {
+                try await context.perform {
+                    try context.save()
+                }
+            }
+        }
+    }
+    
+    func persist(in context: NSManagedObjectContext) throws {
+        if context.hasChanges {
+            try context.save()
+        }
+    }
 }
