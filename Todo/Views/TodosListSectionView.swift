@@ -38,7 +38,8 @@ struct TodosListSectionView: View {
                                 self.handleDelete(todo: todo)
                             }, label: {
                                 Text("Delete")
-                            }).tint(.red)
+                            })
+                            .tint(.red)
                             
                             Button(action: {
                                 self.handleToggle(todo: todo)
@@ -80,5 +81,6 @@ private extension TodosListSectionView {
 }
 
 #Preview {
-    TodosListSectionView(isDoneSection: true, provider: .preview)
+    TodosListSectionView(isDoneSection: Bool.random(), provider: .preview)
+        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

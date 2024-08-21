@@ -12,6 +12,10 @@ final class NewTodoViewModel: ObservableObject {
     private let provider: PersistenceController
     private let context: NSManagedObjectContext
     
+    @Published var isAlertShowed = false
+    @Published var alertHeader = "Data not valid"
+    @Published var alertText = "Enter the correct data and try again :)"
+    
     @Published var text: String = ""
     @Published var deadline = Date()
     
@@ -36,5 +40,14 @@ final class NewTodoViewModel: ObservableObject {
         } catch {
             print(error)
         }
+    }
+    
+    func hanldeSaveButton() -> Bool {
+        if !TodoEntity.isDataValid(text: self.text, deadline: self.deadline) {
+            self.isAlertShowed.toggle()
+            return false
+        }
+        addTodo(text: self.text, deadline: self.deadline)
+        return true
     }
 }

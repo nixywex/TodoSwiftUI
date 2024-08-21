@@ -14,12 +14,12 @@ struct PersistenceController {
     static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
-        for i in 0..<0 {
+        for i in 0..<10 {
             let newTodo = TodoEntity(context: viewContext)
             newTodo.id = UUID()
-            newTodo.deadline_ = Date()
-            newTodo.isDone = ((i % 2) == 0) ? true : false
-            newTodo.text_ = "Do a homework"
+            newTodo.deadline_ = Calendar.current.date(byAdding: .day, value: Int.random(in: -5...5), to: .now) ?? .now
+            newTodo.isDone = Bool.random()
+            newTodo.text_ = "Task #\(i)"
         }
         do {
             try viewContext.save()

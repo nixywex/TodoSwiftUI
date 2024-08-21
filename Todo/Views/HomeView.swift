@@ -25,7 +25,8 @@ struct HomeView: View {
                         })
                     }
                 }
-        }.sheet(isPresented: $isNewTodoSheetShowed) {
+        }
+        .sheet(isPresented: $isNewTodoSheetShowed) {
             NewTodoView(vm: .init(provider: provider))
         }
     }

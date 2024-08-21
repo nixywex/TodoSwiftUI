@@ -45,6 +45,12 @@ extension TodoEntity {
             deadline_ = newValue
         }
     }
+    
+    static func isDataValid(text: String?, deadline: Date?) -> Bool {
+        guard let isTrimmedTextEmpty = text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
+        guard let _ = deadline else { return false }
+        return !isTrimmedTextEmpty
+    }
 }
 
 //preview
@@ -55,7 +61,7 @@ extension TodoEntity {
         for i in 0..<count {
             let todo = TodoEntity(context: context)
             todo.text_ = "Task #\(i)"
-            todo.deadline_ = Calendar.current.date(byAdding: .day, value: -i, to: .now) ?? .now
+            todo.deadline_ = Calendar.current.date(byAdding: .day, value: Int.random(in: -5...5), to: .now) ?? .now
             todo.id = UUID()
             todo.isDone = Bool.random()
             

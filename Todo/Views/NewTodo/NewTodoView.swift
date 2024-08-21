@@ -20,6 +20,7 @@ struct NewTodoView: View {
                         DatePicker(
                             "Do due",
                             selection: $vm.deadline,
+                            in: Date()...,
                             displayedComponents: [.date]
                         )
                     }
@@ -29,9 +30,10 @@ struct NewTodoView: View {
                     ToolbarItem (placement: .topBarTrailing) {
                         Button(action: {
                             withAnimation {
-                                vm.addTodo(text: vm.text, deadline: vm.deadline)
+                                if vm.hanldeSaveButton() {
+                                    dismiss()
+                                }
                             }
-                            dismiss()
                         }, label: {
                             Text("Add todo").bold()
                         })
@@ -43,6 +45,11 @@ struct NewTodoView: View {
                     }
                 }
             }
+        }
+        .alert(vm.alertHeader, isPresented: $vm.isAlertShowed) {
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(vm.alertText)
         }
     }
     

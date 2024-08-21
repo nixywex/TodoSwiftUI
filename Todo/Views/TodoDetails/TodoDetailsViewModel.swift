@@ -10,25 +10,42 @@ import CoreData
 
 final class TodoDetailsViewModel: ObservableObject {
     @Published var isAlertShowed: Bool = false
-    @Published var todo: TodoEntity
+    @Published var alertType: TodoDetailsAlertType = .delete
+    @Published var alertHeader = "Are you sure you want to delete a todo?"
+    @Published var alertText = "The todo cannot be restored"
+    
+    @Published var todoText: String
+    @Published var todoDeadline: Date
+    @Published var isTodoDone: Bool
+
+    private var todo: TodoEntity
     private let provider: PersistenceController
     
     init(todo: TodoEntity, provider: PersistenceController) {
-        self.todo = todo
         self.provider = provider
+        self.todo = todo
+        self.todoText = todo.text
+        self.todoDeadline = todo.deadline
+        self.isTodoDone = todo.isDone
     }
     
-    func getContext(provider: PersistenceController) -> NSManagedObjectContext {
+    private func getContext(provider: PersistenceController) -> NSManagedObjectContext {
         return provider.container.viewContext
     }
     
-    func handleSave() {
+    func handleSave() -> Bool {
+        if !TodoEntity.isDataValid(text: self.todoText, deadline: self.todoDeadline) { return false }
+        
+        self.todo.text = self.todoText
+        self.todo.deadline = self.todoDeadline
+        self.todo.isDone = self.isTodoDone
+        
         let context = getContext(provider: self.provider)
-        do {
-            try self.provider.persist(in: context)
-        } catch {
-            print(error)
-        }
+        
+        do { try self.provider.persist(in: context) }
+        catch { return false }
+        
+        return true
     }
     
     func handleDelete(todo: TodoEntity) {
@@ -36,8 +53,26 @@ final class TodoDetailsViewModel: ObservableObject {
         do {
             guard let existingTodo = provider.exisits(todo, in: context) else {fatalError()}
             try self.provider.delete(existingTodo, in: context)
-        } catch {
-            print(error)
-        }
+        } catch { print(error) }
     }
+    
+    func configAlert(_ alertType: TodoDetailsAlertType) {
+        self.alertType = alertType
+        
+        switch self.alertType {
+        case .delete:
+            alertHeader = "Are you sure you want to delete a todo?"
+            alertText = "The todo cannot be restored"
+        case .invaidData:
+            alertHeader = "Data not valid"
+            alertText = "Enter the correct data and try again :)"
+        }
+        
+        self.isAlertShowed = true
+    }
+}
+
+enum TodoDetailsAlertType {
+    case delete
+    case invaidData
 }

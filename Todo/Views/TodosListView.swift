@@ -20,7 +20,8 @@ struct TodosListView: View {
             List {
                 TodosListSectionView(isDoneSection: false, provider: self.provider)
                 TodosListSectionView(isDoneSection: true, provider: self.provider)
-            }.listStyle(.sidebar)
+            }
+            .listStyle(.sidebar)
         }
     }
 }

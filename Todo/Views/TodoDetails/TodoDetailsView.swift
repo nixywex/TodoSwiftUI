@@ -25,38 +25,46 @@ struct TodoDetailsView: View {
         NavigationStack {
             List {
                 Section ("Edit your todo") {
-                    TextField("Enter your todo", text: $todo.text)
+                    TextField("Enter your todo", text: $vm.todoText)
                     DatePicker(
                         "Do due",
-                        selection: $todo.deadline,
+                        selection: $vm.todoDeadline,
+                        in: Date()...,
                         displayedComponents: [.date]
                     )
-                    Toggle("Is done", isOn: $todo.isDone)
+                    Toggle("Is done", isOn: $vm.isTodoDone)
                 }
                 Section("Actions") {
                     Button(action: {
-                        vm.isAlertShowed.toggle()
+                        vm.configAlert(.delete)
                     }, label: {
-                        Text("Delete todo").foregroundStyle(.red)
+                        Text("Delete todo")
+                            .foregroundStyle(.red)
                     })
                     Button(action: {
-                        vm.handleSave()
-                        dismiss()
+                        if !vm.handleSave() {
+                            vm.configAlert(.invaidData)
+                        } else {
+                            dismiss()
+                        }
                     }, label: {
-                        Text("Save").bold()
+                        Text("Save")
+                            .bold()
                     })
                 }
             }
             .navigationTitle(todo.text)
             .navigationBarTitleDisplayMode(.inline)
-            .alert("Are you sure you want to delete a todo?", isPresented: $vm.isAlertShowed) {
-                Button("Cancel", role: .cancel) {}
-                Button("Delete", role: .destructive) {
-                    vm.handleDelete(todo: todo)
-                    dismiss()
+            .alert(vm.alertHeader, isPresented: $vm.isAlertShowed) {
+                Button(vm.alertType == .delete ? "Cancel" : "OK", role: .cancel) {}
+                if vm.alertType == .delete {
+                    Button("Delete", role: .destructive) {
+                        vm.handleDelete(todo: todo)
+                        dismiss()
+                    }
                 }
             } message: {
-                Text("The todo cannot be restored")
+                Text(vm.alertText)
             }
         }
     }
