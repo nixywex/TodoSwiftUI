@@ -39,6 +39,7 @@
 		F08FFC492C7295F70011A378 /* TodosListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosListView.swift; sourceTree = "<group>"; };
 		F08FFC4B2C7299F20011A378 /* NewTodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTodoView.swift; sourceTree = "<group>"; };
 		F08FFC502C7379970011A378 /* NewTodoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTodoViewModel.swift; sourceTree = "<group>"; };
+		F0B1F1F22C7759A2003ADBB2 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +65,7 @@
 		F08FFC292C7245BE0011A378 = {
 			isa = PBXGroup;
 			children = (
+				F0B1F1F22C7759A2003ADBB2 /* README.md */,
 				F08FFC342C7245BE0011A378 /* Todo */,
 				F08FFC332C7245BE0011A378 /* Products */,
 			);

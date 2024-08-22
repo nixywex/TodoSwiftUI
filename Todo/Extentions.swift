@@ -18,7 +18,6 @@ extension TodoEntity {
         case deadline
     }
     
-    
     static func getAllFetchRequest(sortType: SortType = .deadline) -> NSFetchRequest<TodoEntity> {
         let request: NSFetchRequest<TodoEntity> = todosFetchRequest
         
