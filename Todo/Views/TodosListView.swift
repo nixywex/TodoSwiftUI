@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TodosListView: View {
+    let sortType: TodoEntity.SortType
     @FetchRequest(fetchRequest: TodoEntity.getAllFetchRequest())
     private var todos: FetchedResults<TodoEntity>
     
@@ -18,8 +19,8 @@ struct TodosListView: View {
             Text("You have no todos. Well done! 😁")
         } else {
             List {
-                TodosListSectionView(isDoneSection: false, provider: self.provider)
-                TodosListSectionView(isDoneSection: true, provider: self.provider)
+                TodosListSectionView(isDoneSection: false, provider: self.provider, sortType: self.sortType)
+                TodosListSectionView(isDoneSection: true, provider: self.provider, sortType: self.sortType)
             }
             .listStyle(.sidebar)
         }
@@ -27,6 +28,6 @@ struct TodosListView: View {
 }
 
 #Preview {
-    TodosListView(provider: .preview)
+    TodosListView(sortType: .deadline, provider: .preview)
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

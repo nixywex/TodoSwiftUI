@@ -13,18 +13,34 @@ extension TodoEntity {
         NSFetchRequest(entityName: "TodoEntity")
     }
     
-    static func getAllFetchRequest() -> NSFetchRequest<TodoEntity> {
+    enum SortType {
+        case todoText
+        case deadline
+    }
+    
+    
+    static func getAllFetchRequest(sortType: SortType = .deadline) -> NSFetchRequest<TodoEntity> {
         let request: NSFetchRequest<TodoEntity> = todosFetchRequest
-        request.sortDescriptors = [
-            NSSortDescriptor(keyPath: \TodoEntity.deadline_, ascending: true)
-        ]
+        
+        switch sortType {
+        case .todoText:
+            request.sortDescriptors = [ NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
+        case .deadline:
+            request.sortDescriptors = [ NSSortDescriptor(keyPath: \TodoEntity.deadline_, ascending: true)]
+        }
+        
         return request
     }
     
-    static func getFilteredFetchRequest(isDone: Bool) -> NSFetchRequest<TodoEntity> {
+    static func getFilteredFetchRequest(isDone: Bool, sortType: SortType = .deadline) -> NSFetchRequest<TodoEntity> {
         let request: NSFetchRequest<TodoEntity> = todosFetchRequest
         request.predicate = NSPredicate(format: "isDone == %@", NSNumber(value: isDone))
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.deadline_, ascending: true)]
+        switch sortType {
+        case .todoText:
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
+        case .deadline:
+            request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.deadline_, ascending: true)]
+        }
         return request
     }
     

@@ -9,26 +9,24 @@ import SwiftUI
 import CoreData
 
 struct TodosListSectionView: View {
-    @FetchRequest(fetchRequest: TodoEntity.getFilteredFetchRequest(isDone: false))
-    private var currentTodos: FetchedResults<TodoEntity>
-    
-    @FetchRequest(fetchRequest: TodoEntity.getFilteredFetchRequest(isDone: true))
-    private var completedTodos: FetchedResults<TodoEntity>
-    
+    private var todos: FetchRequest<TodoEntity>
     let provider: PersistenceController
-    
     let isDoneSection: Bool
+    let sortType: TodoEntity.SortType
+    
     @State var isSectionExpanded = true
     
-    init(isDoneSection: Bool, provider: PersistenceController) {
+    init(isDoneSection: Bool, provider: PersistenceController, sortType: TodoEntity.SortType) {
         self.isDoneSection = isDoneSection
         self.isSectionExpanded = !isDoneSection
         self.provider = provider
+        self.todos = FetchRequest(fetchRequest: TodoEntity.getFilteredFetchRequest(isDone: isDoneSection, sortType: sortType))
+        self.sortType = sortType
     }
     
     var body: some View {
         Section("\(isDoneSection ? "Completed" : "Current") todos", isExpanded: $isSectionExpanded) {
-            ForEach(isDoneSection ? self.completedTodos : self.currentTodos) { todo in
+            ForEach(todos.wrappedValue) { todo in
                 NavigationLink(destination: {
                     TodoDetailsView(todo: todo, provider: provider)
                 }, label: {
@@ -81,6 +79,6 @@ private extension TodosListSectionView {
 }
 
 #Preview {
-    TodosListSectionView(isDoneSection: Bool.random(), provider: .preview)
+    TodosListSectionView(isDoneSection: Bool.random(), provider: .preview, sortType: .deadline)
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }
