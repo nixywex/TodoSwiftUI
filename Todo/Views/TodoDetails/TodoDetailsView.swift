@@ -26,14 +26,39 @@ struct TodoDetailsView: View {
             List {
                 Section ("Edit your todo") {
                     TextField("Enter your todo", text: $vm.todoText)
+                    Toggle("Is done", isOn: $vm.isTodoDone)
+                }
+                
+                Section {
+                    Toggle("Start date", isOn: $vm.isStartDateOn)
+                        .onChange(of: vm.isStartDateOn) {
+                            vm.handleToggle()
+                        }
+                    DatePicker(
+                        "Start date",
+                        selection: Binding(get: {
+                            vm.todoStartDate ?? Date()
+                        }, set: { newValue in
+                            vm.todoStartDate = newValue
+                        }),
+                        in: ...vm.todoDeadline,
+                        displayedComponents: [.date]
+                    )
+                    .disabled(vm.isStartDateOn ? false : true)
+                    .opacity(vm.isStartDateOn ? 1 : 0.3)
                     DatePicker(
                         "Do due",
                         selection: $vm.todoDeadline,
                         in: Date()...,
                         displayedComponents: [.date]
                     )
-                    Toggle("Is done", isOn: $vm.isTodoDone)
                 }
+                
+                Section {
+                    TextField("Description", text: $vm.todoDescription, axis: .vertical)
+                        .lineLimit(4, reservesSpace: true)
+                }
+                
                 Section("Actions") {
                     Button(action: {
                         vm.configAlert(.delete)

@@ -4,6 +4,8 @@
         <attribute name="deadline_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isDone" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="startDate_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="text_" optional="YES" attributeType="String"/>
+        <attribute name="todoDescription_" optional="YES" attributeType="String"/>
     </entity>
 </model>

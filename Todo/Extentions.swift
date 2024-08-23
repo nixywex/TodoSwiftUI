@@ -61,10 +61,38 @@ extension TodoEntity {
         }
     }
     
-    static func isDataValid(text: String?, deadline: Date?) -> Bool {
+    var todoDescription: String {
+        get {
+            todoDescription_ ?? "Error"
+        }
+        set {
+            todoDescription_ = newValue
+        }
+    }
+    
+    var prettyDate: String {
+        guard self.startDate_ != nil else {
+            return self.deadline.formatted(.dateTime.day().month())
+        }
+        return "\(self.startDate_!.formatted(.dateTime.day().month())) - \(self.deadline.formatted(.dateTime.day().month()))"
+    }
+    
+    static private func isDateValid(start: Date?, end: Date) -> Bool {
+        guard start != nil else { return true }
+        
+        let compareResult = Calendar.current.compare(end, to: start!, toGranularity: .day)
+        
+        switch compareResult {
+        case .orderedSame: return false
+        case .orderedAscending: return false
+        case .orderedDescending: return true
+        }
+    }
+    
+    static func isDataValid(text: String?, deadline: Date?, startDate: Date?) -> Bool {
         guard let isTrimmedTextEmpty = text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
         guard let _ = deadline else { return false }
-        return !isTrimmedTextEmpty
+        return !isTrimmedTextEmpty && self.isDateValid(start: startDate, end: deadline!)
     }
 }
 

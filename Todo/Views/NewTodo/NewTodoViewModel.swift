@@ -16,20 +16,25 @@ final class NewTodoViewModel: ObservableObject {
     @Published var alertHeader = "Data not valid"
     @Published var alertText = "Enter the correct data and try again :)"
     
+    @Published var isStartDateOn = false
     @Published var text: String = ""
-    @Published var deadline = Date()
+    @Published var deadline: Date = Date()
+    @Published var startDate: Date? = nil
+    @Published var description: String = ""
     
     init(provider: PersistenceController) {
         self.provider = provider
         self.context = provider.newContext
     }
     
-    func addTodo(text: String, deadline: Date) {
+    func addTodo() {
         let newTodo = TodoEntity(context: self.context)
-        newTodo.text_ = text
-        newTodo.deadline_ = deadline
+        newTodo.text_ = self.text
+        newTodo.deadline_ = self.deadline
         newTodo.isDone = false
         newTodo.id = UUID()
+        newTodo.todoDescription_ = self.description
+        newTodo.startDate_ = self.startDate
         
         saveChanges()
     }
@@ -43,11 +48,15 @@ final class NewTodoViewModel: ObservableObject {
     }
     
     func hanldeSaveButton() -> Bool {
-        if !TodoEntity.isDataValid(text: self.text, deadline: self.deadline) {
+        if !TodoEntity.isDataValid(text: self.text, deadline: self.deadline, startDate: self.startDate) {
             self.isAlertShowed.toggle()
             return false
         }
-        addTodo(text: self.text, deadline: self.deadline)
+        addTodo()
         return true
+    }
+    
+    func handleToggle() {
+        self.startDate = self.isStartDateOn ? Date() : nil
     }
 }

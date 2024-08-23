@@ -10,6 +10,7 @@ import CoreData
 
 final class TodoDetailsViewModel: ObservableObject {
     @Published var isAlertShowed: Bool = false
+    @Published var isStartDateOn: Bool
     @Published var alertType: TodoDetailsAlertType = .delete
     @Published var alertHeader = "Are you sure you want to delete a todo?"
     @Published var alertText = "The todo cannot be restored"
@@ -17,7 +18,9 @@ final class TodoDetailsViewModel: ObservableObject {
     @Published var todoText: String
     @Published var todoDeadline: Date
     @Published var isTodoDone: Bool
-
+    @Published var todoStartDate: Date?
+    @Published var todoDescription: String
+    
     private var todo: TodoEntity
     private let provider: PersistenceController
     
@@ -27,6 +30,9 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todoText = todo.text
         self.todoDeadline = todo.deadline
         self.isTodoDone = todo.isDone
+        self.todoStartDate = todo.startDate_
+        self.todoDescription = todo.todoDescription
+        self.isStartDateOn = todo.startDate_ != nil
     }
     
     private func getContext(provider: PersistenceController) -> NSManagedObjectContext {
@@ -34,11 +40,14 @@ final class TodoDetailsViewModel: ObservableObject {
     }
     
     func handleSave() -> Bool {
-        if !TodoEntity.isDataValid(text: self.todoText, deadline: self.todoDeadline) { return false }
+        if !TodoEntity.isDataValid(text: self.todoText, deadline: self.todoDeadline, startDate: self.todoStartDate) { return false }
         
         self.todo.text = self.todoText
         self.todo.deadline = self.todoDeadline
         self.todo.isDone = self.isTodoDone
+        self.todo.todoDescription = self.todoDescription
+        
+        self.todo.startDate_ = self.isStartDateOn ? self.todoStartDate : nil
         
         let context = getContext(provider: self.provider)
         
@@ -54,6 +63,10 @@ final class TodoDetailsViewModel: ObservableObject {
             guard let existingTodo = provider.exisits(todo, in: context) else {fatalError()}
             try self.provider.delete(existingTodo, in: context)
         } catch { print(error) }
+    }
+    
+    func handleToggle() {
+        self.todoStartDate = self.isStartDateOn ? Date() : nil
     }
     
     func configAlert(_ alertType: TodoDetailsAlertType) {

@@ -27,7 +27,7 @@ struct TodoListItemView: View {
                 Text(self.todo.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(todo.isDone ? .gray : .black)
-                Text(self.todo.deadline.formatted(.dateTime.day().month()))
+                Text(self.todo.prettyDate)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fontWeight(.light)
                     .foregroundStyle(todo.isDone ? .gray : getDeadlineColor(deadline: todo.deadline))
