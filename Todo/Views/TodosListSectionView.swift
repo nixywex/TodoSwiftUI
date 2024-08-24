@@ -70,11 +70,7 @@ private extension TodosListSectionView {
     func handleToggle(todo: TodoEntity) {
         let context = self.getContext(provider: self.provider)
         todo.isDone.toggle()
-        do {
-            try self.provider.persist(in: context)
-        } catch {
-            print(error)
-        }
+        let _ = PersistenceController.saveChanges(provider: self.provider, context: context)
     }
 }
 

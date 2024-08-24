@@ -21,6 +21,7 @@ final class NewTodoViewModel: ObservableObject {
     @Published var deadline: Date = Date()
     @Published var startDate: Date? = nil
     @Published var description: String = ""
+    @Published var priority: TodoEntity.Priority = .middle
     
     init(provider: PersistenceController) {
         self.provider = provider
@@ -28,23 +29,11 @@ final class NewTodoViewModel: ObservableObject {
     }
     
     func addTodo() {
-        let newTodo = TodoEntity(context: self.context)
-        newTodo.text_ = self.text
-        newTodo.deadline_ = self.deadline
-        newTodo.isDone = false
-        newTodo.id = UUID()
-        newTodo.todoDescription_ = self.description
-        newTodo.startDate_ = self.startDate
+        let _ = TodoEntity.createNewTodo(context: self.context, text: self.text, deadline: self.deadline,
+                                         startDate: self.startDate, description: self.description, priority: self.priority)
         
-        saveChanges()
-    }
-    
-    private func saveChanges() {
-        do {
-            try self.provider.persist(in: self.context)
-        } catch {
-            print(error)
-        }
+        let _ = PersistenceController.saveChanges(provider: self.provider, context: self.context)
+        
     }
     
     func hanldeSaveButton() -> Bool {

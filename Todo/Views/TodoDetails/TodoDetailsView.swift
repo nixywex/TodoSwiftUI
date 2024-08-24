@@ -34,27 +34,41 @@ struct TodoDetailsView: View {
                         .onChange(of: vm.isStartDateOn) {
                             vm.handleToggle()
                         }
-                    DatePicker(
-                        "Start date",
-                        selection: Binding(get: {
-                            vm.todoStartDate ?? Date()
-                        }, set: { newValue in
-                            vm.todoStartDate = newValue
-                        }),
-                        in: ...vm.todoDeadline,
-                        displayedComponents: [.date]
-                    )
-                    .disabled(vm.isStartDateOn ? false : true)
-                    .opacity(vm.isStartDateOn ? 1 : 0.3)
-                    DatePicker(
-                        "Do due",
-                        selection: $vm.todoDeadline,
-                        in: Date()...,
-                        displayedComponents: [.date]
-                    )
+                    HStack {
+                        Image(systemName: "calendar.badge.clock")
+                        DatePicker(
+                            "Start date",
+                            selection: Binding(get: {
+                                vm.todoStartDate ?? Date()
+                            }, set: { newValue in
+                                vm.todoStartDate = newValue
+                            }),
+                            in: ...vm.todoDeadline,
+                            displayedComponents: [.date]
+                        )
+                        .disabled(vm.isStartDateOn ? false : true)
+                        .opacity(vm.isStartDateOn ? 1 : 0.3)
+                    }
+                    HStack {
+                        Image(systemName: "calendar.badge.checkmark")
+                        DatePicker(
+                            "Do due",
+                            selection: $vm.todoDeadline,
+                            in: Date()...,
+                            displayedComponents: [.date]
+                        )
+                    }
                 }
                 
                 Section {
+                    HStack {
+                        Image(systemName: "exclamationmark.circle")
+                        Picker("Priotity", selection: $vm.todoPriority) {
+                            Text("Low").tag(TodoEntity.Priority.low)
+                            Text("Middle").tag(TodoEntity.Priority.middle)
+                            Text("High").tag(TodoEntity.Priority.high)
+                        }
+                    }
                     TextField("Description", text: $vm.todoDescription, axis: .vertical)
                         .lineLimit(4, reservesSpace: true)
                 }
@@ -63,7 +77,7 @@ struct TodoDetailsView: View {
                     Button(action: {
                         vm.configAlert(.delete)
                     }, label: {
-                        Text("Delete todo")
+                        Text("\(Image(systemName: "trash")) Delete todo")
                             .foregroundStyle(.red)
                     })
                     Button(action: {
@@ -73,7 +87,7 @@ struct TodoDetailsView: View {
                             dismiss()
                         }
                     }, label: {
-                        Text("Save")
+                        Text("\(Image(systemName: "tray.and.arrow.down")) Save")
                             .bold()
                     })
                 }

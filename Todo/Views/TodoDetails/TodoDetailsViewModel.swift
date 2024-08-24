@@ -20,6 +20,7 @@ final class TodoDetailsViewModel: ObservableObject {
     @Published var isTodoDone: Bool
     @Published var todoStartDate: Date?
     @Published var todoDescription: String
+    @Published var todoPriority: TodoEntity.Priority
     
     private var todo: TodoEntity
     private let provider: PersistenceController
@@ -33,6 +34,8 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todoStartDate = todo.startDate_
         self.todoDescription = todo.todoDescription
         self.isStartDateOn = todo.startDate_ != nil
+        self.todoPriority = todo.priority
+        print(self.todoPriority)
     }
     
     private func getContext(provider: PersistenceController) -> NSManagedObjectContext {
@@ -46,21 +49,18 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todo.deadline = self.todoDeadline
         self.todo.isDone = self.isTodoDone
         self.todo.todoDescription = self.todoDescription
-        
         self.todo.startDate_ = self.isStartDateOn ? self.todoStartDate : nil
+        self.todo.priority = self.todoPriority
         
         let context = getContext(provider: self.provider)
         
-        do { try self.provider.persist(in: context) }
-        catch { return false }
-        
-        return true
+        return PersistenceController.saveChanges(provider: self.provider, context: context)
     }
     
     func handleDelete(todo: TodoEntity) {
         let context = getContext(provider: self.provider)
         do {
-            guard let existingTodo = provider.exisits(todo, in: context) else {fatalError()}
+            guard let existingTodo = provider.exisits(todo, in: context) else { return }
             try self.provider.delete(existingTodo, in: context)
         } catch { print(error) }
     }

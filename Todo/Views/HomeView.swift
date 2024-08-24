@@ -32,6 +32,7 @@ struct HomeView: View {
                                 Picker("Sort by", selection: $sortType) {
                                     Text("Deadline").tag(TodoEntity.SortType.deadline)
                                     Text("Todo text").tag(TodoEntity.SortType.todoText)
+                                    Text("Priority").tag(TodoEntity.SortType.priority)
                                 }
                             }
                         } label: {

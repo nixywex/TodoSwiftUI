@@ -4,6 +4,7 @@
         <attribute name="deadline_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isDone" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="priority_" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="startDate_" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="text_" optional="YES" attributeType="String"/>
         <attribute name="todoDescription_" optional="YES" attributeType="String"/>

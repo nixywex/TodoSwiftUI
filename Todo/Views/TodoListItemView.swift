@@ -32,6 +32,12 @@ struct TodoListItemView: View {
                     .fontWeight(.light)
                     .foregroundStyle(todo.isDone ? .gray : getDeadlineColor(deadline: todo.deadline))
             }
+            Spacer()
+            Image(systemName: "circle.fill")
+                .foregroundStyle(todo.isDone ? .gray : getPriorityColor(priority: todo.priority))
+                .font(.system(size: 12))
+                .opacity(0.6)
+            
         }
         .padding(.horizontal, 0)
     }
@@ -45,21 +51,23 @@ private extension TodoListItemView {
     func handleToggle(todo: TodoEntity) {
         let context = getContext(provider: self.provider)
         todo.isDone.toggle()
-        do {
-            try self.provider.persist(in: context)
-        } catch {
-            print(error)
-        }
+        let _ = PersistenceController.saveChanges(provider: self.provider, context: context)
     }
     
     func getDeadlineColor(deadline: Date) -> Color {
         let result = Calendar.current.compare(deadline, to: Date.now, toGranularity: .day)
-        if result == .orderedAscending {
-            return .red
-        } else if result == .orderedSame {
-            return .orange
-        }
+        
+        if result == .orderedAscending { return .red}
+        else if result == .orderedSame { return .orange }
         return .black
+    }
+    
+    func getPriorityColor(priority: TodoEntity.Priority) -> Color {
+        switch priority {
+        case .low : return .green
+        case .middle: return .yellow
+        case .high: return .red
+        }
     }
 }
 
