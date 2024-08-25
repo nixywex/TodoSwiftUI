@@ -19,14 +19,10 @@ struct PersistenceController {
             let start = Bool.random() ? Calendar.current.date(byAdding: .day, value: Int.random(in: -5...0) - 1, to: deadline) : nil
             var priotiry: TodoEntity.Priority
             switch Int.random(in: -1...1) {
-            case -1:
-                priotiry = .low
-            case 0:
-                priotiry = .middle
-            case 1:
-                priotiry = .high
-            default:
-                priotiry = .middle
+            case -1: priotiry = .low
+            case 0: priotiry = .middle
+            case 1: priotiry = .high
+            default: priotiry = .middle
             }
             let todo = TodoEntity.createNewTodo(context: viewContext, text: "Task #\(i)", deadline: deadline,
                                                 startDate: start, description: "Test description", isDone: Bool.random(), priority: priotiry)
@@ -49,12 +45,14 @@ struct PersistenceController {
         return context
     }
     
+    static func getContext(provider: PersistenceController) -> NSManagedObjectContext {
+        return provider.container.viewContext
+    }
+    
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "Todo")
         
-        if inMemory {
-            container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
-        }
+        if inMemory { container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null") }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
@@ -71,25 +69,19 @@ struct PersistenceController {
         if let existingTodo = exisits(todo, in: context) {
             context.delete(existingTodo)
             Task(priority: .background) {
-                try await context.perform {
-                    try context.save()
-                }
+                try await context.perform { try context.save() }
             }
         }
     }
     
     func persist(in context: NSManagedObjectContext) throws {
-        if context.hasChanges {
-            try context.save()
-        }
+        if context.hasChanges { try context.save() }
     }
     
     static func saveChanges(provider:PersistenceController, context: NSManagedObjectContext) -> Bool {
         do {
             try provider.persist(in: context)
             return true
-        } catch {
-            return false
-        }
+        } catch { return false }
     }
 }

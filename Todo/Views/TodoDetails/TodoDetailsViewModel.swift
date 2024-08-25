@@ -9,6 +9,9 @@ import Foundation
 import CoreData
 
 final class TodoDetailsViewModel: ObservableObject {
+    private var todo: TodoEntity
+    private let provider: PersistenceController
+    
     @Published var isAlertShowed: Bool = false
     @Published var isStartDateOn: Bool
     @Published var alertType: TodoDetailsAlertType = .delete
@@ -22,9 +25,6 @@ final class TodoDetailsViewModel: ObservableObject {
     @Published var todoDescription: String
     @Published var todoPriority: TodoEntity.Priority
     
-    private var todo: TodoEntity
-    private let provider: PersistenceController
-    
     init(todo: TodoEntity, provider: PersistenceController) {
         self.provider = provider
         self.todo = todo
@@ -35,11 +35,6 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todoDescription = todo.todoDescription
         self.isStartDateOn = todo.startDate_ != nil
         self.todoPriority = todo.priority
-        print(self.todoPriority)
-    }
-    
-    private func getContext(provider: PersistenceController) -> NSManagedObjectContext {
-        return provider.container.viewContext
     }
     
     func handleSave() -> Bool {
@@ -52,13 +47,13 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todo.startDate_ = self.isStartDateOn ? self.todoStartDate : nil
         self.todo.priority = self.todoPriority
         
-        let context = getContext(provider: self.provider)
+        let context = PersistenceController.getContext(provider: self.provider)
         
         return PersistenceController.saveChanges(provider: self.provider, context: context)
     }
     
     func handleDelete(todo: TodoEntity) {
-        let context = getContext(provider: self.provider)
+        let context = PersistenceController.getContext(provider: self.provider)
         do {
             guard let existingTodo = provider.exisits(todo, in: context) else { return }
             try self.provider.delete(existingTodo, in: context)

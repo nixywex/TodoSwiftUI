@@ -9,8 +9,9 @@ import SwiftUI
 import CoreData
 
 struct TodoListItemView: View {
-    @ObservedObject var todo: TodoEntity
     let provider: PersistenceController
+    
+    @ObservedObject var todo: TodoEntity
     
     var body: some View {
         HStack {
@@ -44,12 +45,8 @@ struct TodoListItemView: View {
 }
 
 private extension TodoListItemView {
-    func getContext(provider: PersistenceController) -> NSManagedObjectContext {
-        return provider.container.viewContext
-    }
-    
     func handleToggle(todo: TodoEntity) {
-        let context = getContext(provider: self.provider)
+        let context = PersistenceController.getContext(provider: self.provider)
         todo.isDone.toggle()
         let _ = PersistenceController.saveChanges(provider: self.provider, context: context)
     }
@@ -72,5 +69,5 @@ private extension TodoListItemView {
 }
 
 #Preview {
-    TodoListItemView(todo: .getPreviewTodo(), provider: .preview)
+    TodoListItemView(provider: .preview, todo: .getPreviewTodo())
 }

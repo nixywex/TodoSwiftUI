@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct TodoDetailsView: View {
+    private let provider: PersistenceController
+    
     @Environment(\.dismiss) var dismiss
-    
-    let provider: PersistenceController
-    
     @ObservedObject var todo: TodoEntity
     @ObservedObject var vm: TodoDetailsViewModel
     

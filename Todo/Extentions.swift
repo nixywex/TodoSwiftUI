@@ -13,7 +13,7 @@ extension TodoEntity {
         NSFetchRequest(entityName: "TodoEntity")
     }
     
-    enum SortType {
+    enum SortType: Codable {
         case todoText
         case deadline
         case priority
@@ -25,8 +25,11 @@ extension TodoEntity {
         case high = 1
     }
     
-    static func getAllFetchRequest(sortType: SortType = .deadline) -> NSFetchRequest<TodoEntity> {
+    static func getAllFetchRequest(sortType: SortType = .deadline, searchTerm: String = "") -> NSFetchRequest<TodoEntity> {
         let request: NSFetchRequest<TodoEntity> = todosFetchRequest
+        
+        if searchTerm.isEmpty { request.predicate = NSPredicate(value: true) }
+        else { request.predicate = NSPredicate(format: "text_ CONTAINS[cd] %@", searchTerm) }
         
         switch sortType {
         case .todoText: request.sortDescriptors = [ NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
@@ -37,9 +40,14 @@ extension TodoEntity {
         return request
     }
     
-    static func getFilteredFetchRequest(isDone: Bool, sortType: SortType = .deadline) -> NSFetchRequest<TodoEntity> {
+    static func getFilteredFetchRequest(isDone: Bool, sortType: SortType = .deadline, searchTerm: String) -> NSFetchRequest<TodoEntity> {
         let request: NSFetchRequest<TodoEntity> = todosFetchRequest
-        request.predicate = NSPredicate(format: "isDone == %@", NSNumber(value: isDone))
+        
+        if searchTerm.isEmpty {
+            request.predicate = NSPredicate(format: "isDone == %@", NSNumber(value: isDone))
+        } else {
+            request.predicate = NSPredicate(format: "text_ CONTAINS[cd] %@ AND isDone == %@", searchTerm, NSNumber(value: isDone))
+        }
         
         switch sortType {
         case .todoText: request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
@@ -51,45 +59,27 @@ extension TodoEntity {
     }
     
     var text: String {
-        get {
-            text_ ?? "Error"
-        }
-        set {
-            text_ = newValue
-        }
+        get { text_ ?? "Error" }
+        set { text_ = newValue }
     }
     
     var deadline: Date {
-        get {
-            deadline_ ?? Date()
-        }
-        set {
-            deadline_ = newValue
-        }
+        get { deadline_ ?? Date() }
+        set { deadline_ = newValue }
     }
     
     var todoDescription: String {
-        get {
-            todoDescription_ ?? "Error"
-        }
-        set {
-            todoDescription_ = newValue
-        }
+        get { todoDescription_ ?? "Error" }
+        set { todoDescription_ = newValue }
     }
     
     var priority: TodoEntity.Priority {
-        get {
-            TodoEntity.getPriority(from: Int(self.priority_))
-        }
-        set {
-            self.priority_ = Int16(newValue.rawValue)
-        }
+        get { TodoEntity.getPriority(from: Int(self.priority_)) }
+        set { self.priority_ = Int16(newValue.rawValue) }
     }
     
     var prettyDate: String {
-        guard self.startDate_ != nil else {
-            return self.deadline.formatted(.dateTime.day().month())
-        }
+        guard self.startDate_ != nil else { return self.deadline.formatted(.dateTime.day().month()) }
         return "\(self.startDate_!.formatted(.dateTime.day().month())) - \(self.deadline.formatted(.dateTime.day().month()))"
     }
     
