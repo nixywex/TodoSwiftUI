@@ -25,28 +25,13 @@ extension TodoEntity {
         case high = 1
     }
     
-    static func getAllFetchRequest(sortType: SortType = .deadline, searchTerm: String = "") -> NSFetchRequest<TodoEntity> {
-        let request: NSFetchRequest<TodoEntity> = todosFetchRequest
-        
-        if searchTerm.isEmpty { request.predicate = NSPredicate(value: true) }
-        else { request.predicate = NSPredicate(format: "text_ CONTAINS[cd] %@", searchTerm) }
-        
-        switch sortType {
-        case .todoText: request.sortDescriptors = [ NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
-        case .deadline: request.sortDescriptors = [ NSSortDescriptor(keyPath: \TodoEntity.deadline_, ascending: true)]
-        case .priority: request.sortDescriptors = [ NSSortDescriptor(keyPath: \TodoEntity.priority_, ascending: true)]
-        }
-        
-        return request
-    }
-    
-    static func getFilteredFetchRequest(isDone: Bool, sortType: SortType = .deadline, searchTerm: String) -> NSFetchRequest<TodoEntity> {
+    static func getFilteredFetchRequest(isDone: Bool, sortType: SortType = .deadline, searchTerm: String, folder: FolderEntity) -> NSFetchRequest<TodoEntity> {
         let request: NSFetchRequest<TodoEntity> = todosFetchRequest
         
         if searchTerm.isEmpty {
-            request.predicate = NSPredicate(format: "isDone == %@", NSNumber(value: isDone))
+            request.predicate = NSPredicate(format: "isDone == %@ AND folder.name_ == %@", NSNumber(value: isDone), folder.name)
         } else {
-            request.predicate = NSPredicate(format: "text_ CONTAINS[cd] %@ AND isDone == %@", searchTerm, NSNumber(value: isDone))
+            request.predicate = NSPredicate(format: "text_ CONTAINS[cd] %@ AND isDone == %@ AND folder.name_ == %@", searchTerm, NSNumber(value: isDone), folder.name)
         }
         
         switch sortType {
@@ -55,6 +40,13 @@ extension TodoEntity {
         case .priority: request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.priority_, ascending: false)]
         }
         
+        return request
+    }
+    
+    static func getFetchRequest(from folder: FolderEntity) -> NSFetchRequest<TodoEntity> {
+        let request: NSFetchRequest<TodoEntity> = todosFetchRequest
+        request.predicate = NSPredicate(format: "folder.name_ == %@", folder.name)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
         return request
     }
     
@@ -126,6 +118,51 @@ extension TodoEntity {
     }
 }
 
+extension FolderEntity {
+    private static var foldersFetchRequest: NSFetchRequest<FolderEntity> {
+        NSFetchRequest(entityName: "FolderEntity")
+    }
+    
+    enum SortType: Codable {
+        case folderName
+        case numberOfTasks
+    }
+    
+    static func getAllFetchRequest() -> NSFetchRequest<FolderEntity> {
+        let request: NSFetchRequest<FolderEntity> = foldersFetchRequest
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \FolderEntity.name_, ascending: true)]
+        return request
+    }
+    
+    static func getSortedFetchRequest(sortType: FolderEntity.SortType) -> NSFetchRequest<FolderEntity> {
+        let request: NSFetchRequest<FolderEntity> = foldersFetchRequest
+        
+        switch sortType {
+        case .folderName: request.sortDescriptors = [ NSSortDescriptor(keyPath: \FolderEntity.name_, ascending: true)]
+        case .numberOfTasks: request.sortDescriptors = [ NSSortDescriptor(keyPath: \FolderEntity.todos?.count, ascending: true)]
+        }
+        
+        return request
+    }
+    
+    var name: String {
+        get { name_ ?? "Error" }
+        set { name_ = newValue }
+    }
+    
+    func getTodos() -> [TodoEntity] {
+        return self.todos?.allObjects as? [TodoEntity] ?? []
+    }
+    
+    static func createNewFolder(context: NSManagedObjectContext, name: String) -> FolderEntity {
+        let newFolder = FolderEntity(context: context)
+        newFolder.name_ = name
+        newFolder.id = UUID()
+        newFolder.todos = []
+        return newFolder
+    }
+}
+
 //preview
 extension TodoEntity {
     @discardableResult
@@ -157,5 +194,30 @@ extension TodoEntity {
     
     static func getEmptyTodo(context: NSManagedObjectContext) -> TodoEntity {
         return TodoEntity(context: context)
+    }
+}
+
+extension FolderEntity {
+    static func getPreviewFolder(context: NSManagedObjectContext) -> FolderEntity {
+        let newFolder = FolderEntity(context: context)
+        newFolder.name_ = "Test Folder"
+        newFolder.id = UUID()
+        newFolder.todos = []
+        for i in 0..<Int.random(in: 0...0) {
+            let deadline = Calendar.current.date(byAdding: .day, value: Int.random(in: -5...5), to: .now) ?? .now
+            let start = Bool.random() ? Calendar.current.date(byAdding: .day, value: Int.random(in: -5...0) - 1, to: deadline) : nil
+            var priotiry: TodoEntity.Priority
+            switch Int.random(in: -1...1) {
+            case -1: priotiry = .low
+            case 0: priotiry = .middle
+            case 1: priotiry = .high
+            default: priotiry = .middle
+            }
+            let todo = TodoEntity.createNewTodo(context: PersistenceController.preview.container.viewContext, text: "Task #\(i)", deadline: deadline,
+                                                startDate: start, description: "Test description", isDone: Bool.random(), priority: priotiry)
+            newFolder.addToTodos(todo)
+        }
+        
+        return newFolder
     }
 }

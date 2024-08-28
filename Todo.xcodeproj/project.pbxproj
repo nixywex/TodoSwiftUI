@@ -10,10 +10,14 @@
 		F00FCBB62C73CA8900F45A30 /* TodoDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00FCBB52C73CA8900F45A30 /* TodoDetailsView.swift */; };
 		F00FCBB92C73CBE300F45A30 /* TodoDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00FCBB82C73CBE300F45A30 /* TodoDetailsViewModel.swift */; };
 		F00FCBBD2C74E88D00F45A30 /* TodosListSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00FCBBC2C74E88D00F45A30 /* TodosListSectionView.swift */; };
+		F0267DA52C7FAA5C001C2FEB /* FoldersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DA42C7FAA5C001C2FEB /* FoldersListView.swift */; };
+		F0267DAA2C7FAFA5001C2FEB /* NewFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DA92C7FAFA5001C2FEB /* NewFolderView.swift */; };
+		F0267DAC2C7FBFF2001C2FEB /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DAB2C7FBFF2001C2FEB /* HomeView.swift */; };
+		F0267DAE2C7FC37F001C2FEB /* FolderListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DAD2C7FC37F001C2FEB /* FolderListItemView.swift */; };
 		F04777B22C73909600A3C7FA /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04777B12C73909600A3C7FA /* Extentions.swift */; };
 		F04777B42C73984000A3C7FA /* TodoListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04777B32C73984000A3C7FA /* TodoListItemView.swift */; };
 		F08FFC362C7245BE0011A378 /* TodoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC352C7245BE0011A378 /* TodoApp.swift */; };
-		F08FFC382C7245BE0011A378 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC372C7245BE0011A378 /* HomeView.swift */; };
+		F08FFC382C7245BE0011A378 /* FolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC372C7245BE0011A378 /* FolderView.swift */; };
 		F08FFC3A2C7245C00011A378 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F08FFC392C7245C00011A378 /* Assets.xcassets */; };
 		F08FFC3D2C7245C00011A378 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F08FFC3C2C7245C00011A378 /* Preview Assets.xcassets */; };
 		F08FFC3F2C7245C00011A378 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC3E2C7245C00011A378 /* Persistence.swift */; };
@@ -27,11 +31,15 @@
 		F00FCBB52C73CA8900F45A30 /* TodoDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailsView.swift; sourceTree = "<group>"; };
 		F00FCBB82C73CBE300F45A30 /* TodoDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailsViewModel.swift; sourceTree = "<group>"; };
 		F00FCBBC2C74E88D00F45A30 /* TodosListSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosListSectionView.swift; sourceTree = "<group>"; };
+		F0267DA42C7FAA5C001C2FEB /* FoldersListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersListView.swift; sourceTree = "<group>"; };
+		F0267DA92C7FAFA5001C2FEB /* NewFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFolderView.swift; sourceTree = "<group>"; };
+		F0267DAB2C7FBFF2001C2FEB /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		F0267DAD2C7FC37F001C2FEB /* FolderListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListItemView.swift; sourceTree = "<group>"; };
 		F04777B12C73909600A3C7FA /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
 		F04777B32C73984000A3C7FA /* TodoListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListItemView.swift; sourceTree = "<group>"; };
 		F08FFC322C7245BE0011A378 /* Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F08FFC352C7245BE0011A378 /* TodoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoApp.swift; sourceTree = "<group>"; };
-		F08FFC372C7245BE0011A378 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		F08FFC372C7245BE0011A378 /* FolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderView.swift; sourceTree = "<group>"; };
 		F08FFC392C7245C00011A378 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F08FFC3C2C7245C00011A378 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F08FFC3E2C7245C00011A378 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
@@ -84,11 +92,11 @@
 			children = (
 				F08FFC482C7295C40011A378 /* Views */,
 				F08FFC352C7245BE0011A378 /* TodoApp.swift */,
-				F08FFC392C7245C00011A378 /* Assets.xcassets */,
 				F08FFC3E2C7245C00011A378 /* Persistence.swift */,
-				F08FFC402C7245C00011A378 /* Todo.xcdatamodeld */,
-				F08FFC3B2C7245C00011A378 /* Preview Content */,
 				F04777B12C73909600A3C7FA /* Extentions.swift */,
+				F08FFC402C7245C00011A378 /* Todo.xcdatamodeld */,
+				F08FFC392C7245C00011A378 /* Assets.xcassets */,
+				F08FFC3B2C7245C00011A378 /* Preview Content */,
 			);
 			path = Todo;
 			sourceTree = "<group>";
@@ -104,12 +112,16 @@
 		F08FFC482C7295C40011A378 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				F00FCBB72C73CBD200F45A30 /* TodoDetails */,
 				F08FFC4D2C7379780011A378 /* NewTodo */,
-				F08FFC372C7245BE0011A378 /* HomeView.swift */,
+				F00FCBB72C73CBD200F45A30 /* TodoDetails */,
+				F0267DAB2C7FBFF2001C2FEB /* HomeView.swift */,
+				F0267DA42C7FAA5C001C2FEB /* FoldersListView.swift */,
+				F08FFC372C7245BE0011A378 /* FolderView.swift */,
+				F0267DA92C7FAFA5001C2FEB /* NewFolderView.swift */,
+				F0267DAD2C7FC37F001C2FEB /* FolderListItemView.swift */,
 				F08FFC492C7295F70011A378 /* TodosListView.swift */,
-				F04777B32C73984000A3C7FA /* TodoListItemView.swift */,
 				F00FCBBC2C74E88D00F45A30 /* TodosListSectionView.swift */,
+				F04777B32C73984000A3C7FA /* TodoListItemView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -196,14 +208,18 @@
 				F08FFC512C7379970011A378 /* NewTodoViewModel.swift in Sources */,
 				F00FCBB92C73CBE300F45A30 /* TodoDetailsViewModel.swift in Sources */,
 				F08FFC3F2C7245C00011A378 /* Persistence.swift in Sources */,
+				F0267DAC2C7FBFF2001C2FEB /* HomeView.swift in Sources */,
 				F08FFC4A2C7295F70011A378 /* TodosListView.swift in Sources */,
+				F0267DAE2C7FC37F001C2FEB /* FolderListItemView.swift in Sources */,
 				F00FCBB62C73CA8900F45A30 /* TodoDetailsView.swift in Sources */,
-				F08FFC382C7245BE0011A378 /* HomeView.swift in Sources */,
+				F08FFC382C7245BE0011A378 /* FolderView.swift in Sources */,
 				F00FCBBD2C74E88D00F45A30 /* TodosListSectionView.swift in Sources */,
+				F0267DA52C7FAA5C001C2FEB /* FoldersListView.swift in Sources */,
 				F04777B22C73909600A3C7FA /* Extentions.swift in Sources */,
 				F08FFC4C2C7299F20011A378 /* NewTodoView.swift in Sources */,
 				F04777B42C73984000A3C7FA /* TodoListItemView.swift in Sources */,
 				F08FFC362C7245BE0011A378 /* TodoApp.swift in Sources */,
+				F0267DAA2C7FAFA5001C2FEB /* NewFolderView.swift in Sources */,
 				F08FFC422C7245C00011A378 /* Todo.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

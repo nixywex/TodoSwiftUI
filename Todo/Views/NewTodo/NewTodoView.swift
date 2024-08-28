@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NewTodoView: View {
     @Environment(\.dismiss) var dismiss
+    
     @ObservedObject var vm: NewTodoViewModel
     
     var body: some View {
@@ -93,5 +94,5 @@ struct NewTodoView: View {
 }
 
 #Preview {
-    NewTodoView(vm: .init(provider: .shared))
+    NewTodoView(vm: .init(context: PersistenceController.preview.container.viewContext, folder: FolderEntity.getPreviewFolder(context: PersistenceController.preview.container.viewContext)))
 }

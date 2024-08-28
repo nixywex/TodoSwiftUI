@@ -9,16 +9,19 @@ import SwiftUI
 import CoreData
 
 struct TodosListSectionView: View {
+    @Environment(\.managedObjectContext) var managedObjectContext
+    
     private var todos: FetchRequest<TodoEntity>
     private let isDoneSection: Bool
+    var folder: FolderEntity
     
-    @Environment(\.managedObjectContext) var managedObjectContext
     @State var isSectionExpanded = true
     
-    init(isDoneSection: Bool, sortType: TodoEntity.SortType, searchTerm: String) {
+    init(isDoneSection: Bool, sortType: TodoEntity.SortType, searchTerm: String, folder: FolderEntity) {
         self.isDoneSection = isDoneSection
         self.isSectionExpanded = !isDoneSection
-        self.todos = FetchRequest(fetchRequest: TodoEntity.getFilteredFetchRequest(isDone: isDoneSection, sortType: sortType, searchTerm: searchTerm))
+        self.todos = FetchRequest(fetchRequest: TodoEntity.getFilteredFetchRequest(isDone: isDoneSection, searchTerm: searchTerm, folder: folder))
+        self.folder = folder
     }
     
     var body: some View {
@@ -66,6 +69,6 @@ private extension TodosListSectionView {
 }
 
 #Preview {
-    TodosListSectionView(isDoneSection: Bool.random(), sortType: .deadline, searchTerm: "")
+    TodosListSectionView(isDoneSection: Bool.random(), sortType: .deadline, searchTerm: "", folder: FolderEntity(context: PersistenceController.preview.container.viewContext))
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

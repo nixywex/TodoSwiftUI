@@ -14,19 +14,24 @@ struct PersistenceController {
     static var preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
-        for i in 0..<10 {
-            let deadline = Calendar.current.date(byAdding: .day, value: Int.random(in: -5...5), to: .now) ?? .now
-            let start = Bool.random() ? Calendar.current.date(byAdding: .day, value: Int.random(in: -5...0) - 1, to: deadline) : nil
-            var priotiry: TodoEntity.Priority
-            switch Int.random(in: -1...1) {
-            case -1: priotiry = .low
-            case 0: priotiry = .middle
-            case 1: priotiry = .high
-            default: priotiry = .middle
+        for j in 0..<5 {
+            let newFolder = FolderEntity(context: viewContext)
+            newFolder.name_ = "Folder \(j)"
+            newFolder.id = UUID()
+            for i in 0..<5 {
+                let deadline = Calendar.current.date(byAdding: .day, value: Int.random(in: -5...5), to: .now) ?? .now
+                let start = Bool.random() ? Calendar.current.date(byAdding: .day, value: Int.random(in: -5...0) - 1, to: deadline) : nil
+                var priotiry: TodoEntity.Priority
+                switch Int.random(in: -1...1) {
+                case -1: priotiry = .low
+                case 0: priotiry = .middle
+                case 1: priotiry = .high
+                default: priotiry = .middle
+                }
+                let todo = TodoEntity.createNewTodo(context: viewContext, text: "Task #\(i) Folder \(j)", deadline: deadline,
+                                                    startDate: start, description: "Test description", isDone: Bool.random(), priority: priotiry)
+                newFolder.addToTodos(todo)
             }
-            let todo = TodoEntity.createNewTodo(context: viewContext, text: "Task #\(i)", deadline: deadline,
-                                                startDate: start, description: "Test description", isDone: Bool.random(), priority: priotiry)
-            
         }
         do {
             try viewContext.save()

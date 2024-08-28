@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 
 final class NewTodoViewModel: ObservableObject {
-    private let provider: PersistenceController
+    private let folder: FolderEntity
     private let context: NSManagedObjectContext
     
     @Published var isAlertShowed = false
@@ -23,17 +23,16 @@ final class NewTodoViewModel: ObservableObject {
     @Published var description: String = ""
     @Published var priority: TodoEntity.Priority = .middle
     
-    init(provider: PersistenceController) {
-        self.provider = provider
-        self.context = provider.newContext
+    init(context: NSManagedObjectContext, folder: FolderEntity) {
+        self.context = context
+        self.folder = folder
     }
     
     func addTodo() {
-        let _ = TodoEntity.createNewTodo(context: self.context, text: self.text, deadline: self.deadline,
-                                         startDate: self.startDate, description: self.description, priority: self.priority)
-        
-        let _ = PersistenceController.saveChanges(context: self.context)
-        
+        let newTodo = TodoEntity.createNewTodo(context: self.context, text: self.text, deadline: self.deadline,
+                                               startDate: self.startDate, description: self.description, priority: self.priority)
+        self.folder.addToTodos(newTodo)
+        let _ = PersistenceController.saveChanges(context: context)
     }
     
     func hanldeSaveButton() -> Bool {
