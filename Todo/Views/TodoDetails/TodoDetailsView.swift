@@ -6,18 +6,18 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct TodoDetailsView: View {
-    private let provider: PersistenceController
-    
     @Environment(\.dismiss) var dismiss
-    @ObservedObject var todo: TodoEntity
-    @ObservedObject var vm: TodoDetailsViewModel
+    @Environment(\.managedObjectContext) var managedObjectContext
     
-    init(todo: TodoEntity, provider: PersistenceController) {
-        self.todo = todo
-        self.provider = provider
-        self.vm = TodoDetailsViewModel(todo: todo, provider: provider)
+    @ObservedObject var todo: TodoEntity
+    @StateObject var vm: TodoDetailsViewModel
+    
+    init(todo: TodoEntity) {
+        _todo = ObservedObject(initialValue: todo)
+        _vm = StateObject(wrappedValue: TodoDetailsViewModel(todo: todo, context: todo.managedObjectContext!))
     }
     
     var body: some View {
@@ -110,5 +110,5 @@ struct TodoDetailsView: View {
 
 
 #Preview {
-    TodoDetailsView(todo: .getPreviewTodo(), provider: .preview)
+    TodoDetailsView(todo: .getPreviewTodo())
 }

@@ -10,7 +10,7 @@ import CoreData
 
 final class TodoDetailsViewModel: ObservableObject {
     private var todo: TodoEntity
-    private let provider: PersistenceController
+    private let context: NSManagedObjectContext
     
     @Published var isAlertShowed: Bool = false
     @Published var isStartDateOn: Bool
@@ -25,9 +25,9 @@ final class TodoDetailsViewModel: ObservableObject {
     @Published var todoDescription: String
     @Published var todoPriority: TodoEntity.Priority
     
-    init(todo: TodoEntity, provider: PersistenceController) {
-        self.provider = provider
+    init(todo: TodoEntity, context: NSManagedObjectContext) {
         self.todo = todo
+        self.context = context
         self.todoText = todo.text
         self.todoDeadline = todo.deadline
         self.isTodoDone = todo.isDone
@@ -38,7 +38,10 @@ final class TodoDetailsViewModel: ObservableObject {
     }
     
     func handleSave() -> Bool {
-        if !TodoEntity.isDataValid(text: self.todoText, deadline: self.todoDeadline, startDate: self.todoStartDate) { return false }
+        if !TodoEntity.isDataValid(text: self.todoText, deadline: self.todoDeadline, startDate: self.todoStartDate) {
+            print("Save error")
+            return false
+        }
         
         self.todo.text = self.todoText
         self.todo.deadline = self.todoDeadline
@@ -47,16 +50,15 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todo.startDate_ = self.isStartDateOn ? self.todoStartDate : nil
         self.todo.priority = self.todoPriority
         
-        let context = PersistenceController.getContext(provider: self.provider)
-        
-        return PersistenceController.saveChanges(provider: self.provider, context: context)
+        print(self.todo)
+                
+        return PersistenceController.saveChanges(context: self.context)
     }
     
     func handleDelete(todo: TodoEntity) {
-        let context = PersistenceController.getContext(provider: self.provider)
         do {
-            guard let existingTodo = provider.exisits(todo, in: context) else { return }
-            try self.provider.delete(existingTodo, in: context)
+            guard let existingTodo = PersistenceController.exisits(todo, in: self.context) else { return }
+            try PersistenceController.delete(existingTodo, in: self.context)
         } catch { print(error) }
     }
     

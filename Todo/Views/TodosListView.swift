@@ -9,15 +9,13 @@ import SwiftUI
 
 struct TodosListView: View {
     let sortType: TodoEntity.SortType
-    let provider: PersistenceController
     let searchTerm: String
     
     private var todos: FetchRequest<TodoEntity>
     
-    init(sortType: TodoEntity.SortType, provider: PersistenceController, searchTerm: String) {
+    init(sortType: TodoEntity.SortType, searchTerm: String) {
         self.todos = FetchRequest(fetchRequest: TodoEntity.getAllFetchRequest(searchTerm: searchTerm))
         self.sortType = sortType
-        self.provider = provider
         self.searchTerm = searchTerm
     }
     
@@ -29,8 +27,8 @@ struct TodosListView: View {
             Text("You have no todos. Well done! 😁")
         } else {
             List {
-                TodosListSectionView(isDoneSection: false, provider: self.provider, sortType: self.sortType, searchTerm: self.searchTerm)
-                TodosListSectionView(isDoneSection: true, provider: self.provider, sortType: self.sortType, searchTerm: self.searchTerm)
+                TodosListSectionView(isDoneSection: false, sortType: self.sortType, searchTerm: self.searchTerm)
+                TodosListSectionView(isDoneSection: true, sortType: self.sortType, searchTerm: self.searchTerm)
             }
             .listStyle(.sidebar)
         }
@@ -38,6 +36,6 @@ struct TodosListView: View {
 }
 
 #Preview {
-    TodosListView(sortType: .deadline, provider: .preview, searchTerm: "")
+    TodosListView(sortType: .deadline, searchTerm: "")
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

@@ -18,7 +18,7 @@ struct HomeView: View {
     
     var body: some View {
         NavigationStack {
-            TodosListView(sortType: self.sortType, provider: self.provider, searchTerm: self.searchTerm)
+            TodosListView(sortType: self.sortType, searchTerm: self.searchTerm)
                 .searchable(text: $searchTerm, placement: .navigationBarDrawer, prompt: "Search todos")
                 .navigationTitle("Your todos")
                 .toolbar {

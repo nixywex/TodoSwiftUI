@@ -11,14 +11,13 @@ import CoreData
 struct TodosListSectionView: View {
     private var todos: FetchRequest<TodoEntity>
     private let isDoneSection: Bool
-    let provider: PersistenceController
     
+    @Environment(\.managedObjectContext) var managedObjectContext
     @State var isSectionExpanded = true
     
-    init(isDoneSection: Bool, provider: PersistenceController, sortType: TodoEntity.SortType, searchTerm: String) {
+    init(isDoneSection: Bool, sortType: TodoEntity.SortType, searchTerm: String) {
         self.isDoneSection = isDoneSection
         self.isSectionExpanded = !isDoneSection
-        self.provider = provider
         self.todos = FetchRequest(fetchRequest: TodoEntity.getFilteredFetchRequest(isDone: isDoneSection, sortType: sortType, searchTerm: searchTerm))
     }
     
@@ -26,9 +25,9 @@ struct TodosListSectionView: View {
         Section("\(isDoneSection ? "Completed" : "Current") todos", isExpanded: $isSectionExpanded) {
             ForEach(todos.wrappedValue) { todo in
                 NavigationLink(destination: {
-                    TodoDetailsView(todo: todo, provider: provider)
+                    TodoDetailsView(todo: todo)
                 }, label: {
-                    TodoListItemView(provider: provider, todo: todo)
+                    TodoListItemView(todo: todo)
                         .swipeActions {
                             Button(action: {
                                 self.handleDelete(todo: todo)
@@ -52,23 +51,21 @@ struct TodosListSectionView: View {
 
 private extension TodosListSectionView {
     func handleDelete(todo: TodoEntity) {
-        let context = PersistenceController.getContext(provider: self.provider)
         do {
-            guard let existingTodo = provider.exisits(todo, in: context) else {fatalError()}
-            try self.provider.delete(existingTodo, in: context)
+            guard let existingTodo = PersistenceController.exisits(todo, in: self.managedObjectContext) else {fatalError()}
+            try PersistenceController.delete(existingTodo, in: self.managedObjectContext)
         } catch {
             print(error)
         }
     }
     
     func handleToggle(todo: TodoEntity) {
-        let context = PersistenceController.getContext(provider: self.provider)
         todo.isDone.toggle()
-        let _ = PersistenceController.saveChanges(provider: self.provider, context: context)
+        let _ = PersistenceController.saveChanges(context: self.managedObjectContext)
     }
 }
 
 #Preview {
-    TodosListSectionView(isDoneSection: Bool.random(), provider: .preview, sortType: .deadline, searchTerm: "")
+    TodosListSectionView(isDoneSection: Bool.random(), sortType: .deadline, searchTerm: "")
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

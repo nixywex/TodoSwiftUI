@@ -9,8 +9,7 @@ import SwiftUI
 import CoreData
 
 struct TodoListItemView: View {
-    let provider: PersistenceController
-    
+    @Environment(\.managedObjectContext) var managedObjectContext
     @ObservedObject var todo: TodoEntity
     
     var body: some View {
@@ -46,9 +45,8 @@ struct TodoListItemView: View {
 
 private extension TodoListItemView {
     func handleToggle(todo: TodoEntity) {
-        let context = PersistenceController.getContext(provider: self.provider)
         todo.isDone.toggle()
-        let _ = PersistenceController.saveChanges(provider: self.provider, context: context)
+        let _ = PersistenceController.saveChanges(context: self.managedObjectContext)
     }
     
     func getDeadlineColor(deadline: Date) -> Color {
@@ -69,5 +67,5 @@ private extension TodoListItemView {
 }
 
 #Preview {
-    TodoListItemView(provider: .preview, todo: .getPreviewTodo())
+    TodoListItemView(todo: .getPreviewTodo())
 }

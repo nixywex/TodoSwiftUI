@@ -61,11 +61,11 @@ struct PersistenceController {
         container.viewContext.automaticallyMergesChangesFromParent = true
     }
     
-    func exisits(_ todo: TodoEntity, in context: NSManagedObjectContext) -> TodoEntity? {
+    static func exisits(_ todo: TodoEntity, in context: NSManagedObjectContext) -> TodoEntity? {
         try? context.existingObject(with: todo.objectID) as? TodoEntity
     }
     
-    func delete(_ todo: TodoEntity, in context: NSManagedObjectContext) throws {
+    static func delete(_ todo: TodoEntity, in context: NSManagedObjectContext) throws {
         if let existingTodo = exisits(todo, in: context) {
             context.delete(existingTodo)
             Task(priority: .background) {
@@ -74,13 +74,13 @@ struct PersistenceController {
         }
     }
     
-    func persist(in context: NSManagedObjectContext) throws {
+    static func persist(in context: NSManagedObjectContext) throws {
         if context.hasChanges { try context.save() }
     }
     
-    static func saveChanges(provider:PersistenceController, context: NSManagedObjectContext) -> Bool {
+    static func saveChanges(context: NSManagedObjectContext) -> Bool {
         do {
-            try provider.persist(in: context)
+            try PersistenceController.persist(in: context)
             return true
         } catch { return false }
     }
