@@ -9,17 +9,21 @@ import SwiftUI
 
 struct FoldersListView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
-    @FetchRequest(fetchRequest: FolderEntity.getAllFetchRequest()) var folders
+    var folders: FetchRequest<FolderEntity>
     
+    init() {
+        self.folders = FetchRequest(fetchRequest: FolderEntity.getAllFetchRequest())
+    }
+
     var body: some View {
         List {
-            ForEach(folders) { folder in
+            ForEach(folders.wrappedValue) { folder in
                 NavigationLink(destination: {
                     FolderView(folder: folder)
                 }, label: {
                     FolderListItemView(folder: folder)
                 })
-                .swipeActions{
+                .swipeActions {
                     Button(action: {
                         handleDelete(folder)
                     }, label: {

@@ -14,7 +14,7 @@ struct FolderListItemView: View {
         VStack {
             Text(folder.name)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Text("You have \(folder.getTodos().filter{ !$0.isDone }.count) current todos")
+            Text("You have \(folder.numberOfCurrentTodos) current todos")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .fontWeight(.light)
                 .foregroundStyle(.gray)

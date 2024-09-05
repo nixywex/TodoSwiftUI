@@ -39,7 +39,6 @@ final class TodoDetailsViewModel: ObservableObject {
     
     func handleSave() -> Bool {
         if !TodoEntity.isDataValid(text: self.todoText, deadline: self.todoDeadline, startDate: self.todoStartDate) {
-            print("Save error")
             return false
         }
         
@@ -49,8 +48,6 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todo.todoDescription = self.todoDescription
         self.todo.startDate_ = self.isStartDateOn ? self.todoStartDate : nil
         self.todo.priority = self.todoPriority
-        
-        print(self.todo)
                 
         return PersistenceController.saveChanges(context: self.context)
     }
@@ -71,7 +68,7 @@ final class TodoDetailsViewModel: ObservableObject {
         
         switch self.alertType {
         case .delete:
-            alertHeader = "Are you sure you want to delete a todo?"
+            alertHeader = "Are you sure you want to delete this todo?"
             alertText = "The todo cannot be restored"
         case .invaidData:
             alertHeader = "Data not valid"

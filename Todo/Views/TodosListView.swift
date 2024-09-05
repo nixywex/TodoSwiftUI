@@ -17,7 +17,7 @@ struct TodosListView: View {
         self.sortType = sortType
         self.searchTerm = searchTerm
         self.folder = folder
-        self.todos = FetchRequest(fetchRequest: TodoEntity.getFetchRequest(from: folder))
+        self.todos = FetchRequest(fetchRequest: TodoEntity.getFilteredFetchRequest(isDone: false, sortType: sortType, searchTerm: searchTerm, folder: folder))
     }
     
     var body: some View {

@@ -14,7 +14,7 @@ struct HomeView: View {
         NavigationStack {
             FoldersListView()
                 .navigationTitle("Your folders")
-                .toolbar{
+                .toolbar {
                     ToolbarItem {
                         Button(action: {
                             isNewFolderSheetShowed.toggle()

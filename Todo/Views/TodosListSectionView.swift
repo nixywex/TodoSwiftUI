@@ -20,7 +20,7 @@ struct TodosListSectionView: View {
     init(isDoneSection: Bool, sortType: TodoEntity.SortType, searchTerm: String, folder: FolderEntity) {
         self.isDoneSection = isDoneSection
         self.isSectionExpanded = !isDoneSection
-        self.todos = FetchRequest(fetchRequest: TodoEntity.getFilteredFetchRequest(isDone: isDoneSection, searchTerm: searchTerm, folder: folder))
+        self.todos = FetchRequest(fetchRequest: TodoEntity.getFilteredFetchRequest(isDone: isDoneSection, sortType: sortType, searchTerm: searchTerm, folder: folder))
         self.folder = folder
     }
     
