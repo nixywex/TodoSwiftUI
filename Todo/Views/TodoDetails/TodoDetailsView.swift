@@ -14,6 +14,7 @@ struct TodoDetailsView: View {
     
     @ObservedObject var todo: TodoEntity
     @StateObject var vm: TodoDetailsViewModel
+    @FetchRequest(fetchRequest: FolderEntity.getAllFetchRequest()) private var folders
     
     init(todo: TodoEntity) {
         _todo = ObservedObject(initialValue: todo)
@@ -68,6 +69,11 @@ struct TodoDetailsView: View {
                             Text("High").tag(TodoEntity.Priority.high)
                         }
                     }
+                    Picker("Folder", selection: $vm.todoFolder) {
+                        ForEach(folders, id: \.id) { folder in
+                            Text(folder.name).tag(folder)
+                        }
+                    }
                     TextField("Description", text: $vm.todoDescription, axis: .vertical)
                         .lineLimit(4, reservesSpace: true)
                 }
@@ -81,7 +87,7 @@ struct TodoDetailsView: View {
                     })
                     Button(action: {
                         if !vm.handleSave() {
-                            vm.configAlert(.invaidData)
+                            vm.configAlert(.invalidData)
                         } else {
                             dismiss()
                         }

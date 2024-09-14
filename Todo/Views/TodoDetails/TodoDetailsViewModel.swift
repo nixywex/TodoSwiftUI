@@ -14,7 +14,7 @@ final class TodoDetailsViewModel: ObservableObject {
     
     @Published var isAlertShowed: Bool = false
     @Published var isStartDateOn: Bool
-    @Published var alertType: TodoDetailsAlertType = .delete
+    @Published var alertType: AlertType = .delete
     @Published var alertHeader = "Are you sure you want to delete a todo?"
     @Published var alertText = "The todo cannot be restored"
     
@@ -24,6 +24,7 @@ final class TodoDetailsViewModel: ObservableObject {
     @Published var todoStartDate: Date?
     @Published var todoDescription: String
     @Published var todoPriority: TodoEntity.Priority
+    @Published var todoFolder: FolderEntity
     
     init(todo: TodoEntity, context: NSManagedObjectContext) {
         self.todo = todo
@@ -35,10 +36,12 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todoDescription = todo.todoDescription
         self.isStartDateOn = todo.startDate_ != nil
         self.todoPriority = todo.priority
+        self.todoFolder = todo.folder ?? FolderEntity(context: context)
     }
     
     func handleSave() -> Bool {
         if !TodoEntity.isDataValid(text: self.todoText, deadline: self.todoDeadline, startDate: self.todoStartDate) {
+            todoText = todo.text
             return false
         }
         
@@ -48,6 +51,7 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todo.todoDescription = self.todoDescription
         self.todo.startDate_ = self.isStartDateOn ? self.todoStartDate : nil
         self.todo.priority = self.todoPriority
+        self.todo.folder = self.todoFolder
                 
         return PersistenceController.saveChanges(context: self.context)
     }
@@ -63,23 +67,18 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todoStartDate = self.isStartDateOn ? Date() : nil
     }
     
-    func configAlert(_ alertType: TodoDetailsAlertType) {
+    func configAlert(_ alertType: AlertType) {
         self.alertType = alertType
         
         switch self.alertType {
         case .delete:
             alertHeader = "Are you sure you want to delete this todo?"
             alertText = "The todo cannot be restored"
-        case .invaidData:
+        case .invalidData:
             alertHeader = "Data not valid"
             alertText = "Enter the correct data and try again :)"
         }
         
         self.isAlertShowed = true
     }
-}
-
-enum TodoDetailsAlertType {
-    case delete
-    case invaidData
 }

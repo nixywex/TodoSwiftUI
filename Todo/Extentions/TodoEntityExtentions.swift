@@ -50,6 +50,12 @@ extension TodoEntity {
         return request
     }
     
+    static func getAllFetchRequest() -> NSFetchRequest<TodoEntity> {
+        let request: NSFetchRequest<TodoEntity> = todosFetchRequest
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
+        return request
+    }
+    
     var text: String {
         get { text_ ?? "Error" }
         set { text_ = newValue }

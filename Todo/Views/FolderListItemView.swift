@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FolderListItemView: View {
-    let folder: FolderEntity
+    @ObservedObject var folder: FolderEntity
     
     var body: some View {
         VStack {

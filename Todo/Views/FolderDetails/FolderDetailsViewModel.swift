@@ -7,15 +7,16 @@
 
 import Foundation
 import CoreData
-import SwiftUI
 
 final class FolderDetailsViewModel: ObservableObject {
+    private var folder: FolderEntity
     var context: NSManagedObjectContext
-    var folder: FolderEntity
-    var alertController = AlertController(alertHeader: "", alertText: "", alertType: .error, buttonsActions: [], buttonsText: ["", ""])
-
+    
     @Published var folderName: String
     @Published var isAlertShowed = false
+    @Published var alertTitle = ""
+    @Published var alertText = ""
+    @Published var alertType: AlertType = .delete
     
     init(folder: FolderEntity, context: NSManagedObjectContext) {
         self.folder = folder
@@ -25,7 +26,8 @@ final class FolderDetailsViewModel: ObservableObject {
     
     func handleSave() -> Bool {
         if !FolderEntity.isDataValid(name: folderName) {
-            configErrorAlert()
+            configAlert(alertType: .invalidData)
+            folderName = folder.name
             return false
         }
         
@@ -34,30 +36,23 @@ final class FolderDetailsViewModel: ObservableObject {
         return PersistenceController.saveChanges(context: context)
     }
     
-    func configDeleteAlert() {
-        alertController.alertHeader = "Are you sure you want to delete this folder?"
-        alertController.alertText = "The folder cannot be restored"
-        alertController.alertType = .question
-        alertController.buttonsActions = [cancel, deleteFolder]
-        alertController.buttonsText = ["Cancel", "Delete"]
-        isAlertShowed = true
-    }
-    
-    func configErrorAlert() {
-        alertController.alertHeader = "Data not valid"
-        alertController.alertText = "Enter the correct data and try again :)"
-        alertController.alertType = .error
-        alertController.buttonsActions = [cancel]
-        alertController.buttonsText = ["OK"]
-        isAlertShowed = true
-    }
-    
     func deleteFolder() {
         context.delete(self.folder)
         let _ = PersistenceController.saveChanges(context: context)
     }
     
-    func cancel() {
+    func configAlert(alertType: AlertType) {
+        self.alertType = alertType
         
+        switch alertType {
+        case .delete:
+            self.alertTitle = "Are you sure you want to delete this folder?"
+            self.alertText = "The folder cannot be restored"
+        case .invalidData:
+            self.alertTitle = "Data not valid"
+            self.alertText = "Enter the correct data and try again :)"
+        }
+        
+        self.isAlertShowed.toggle()
     }
 }

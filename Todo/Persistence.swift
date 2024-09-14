@@ -50,10 +50,6 @@ struct PersistenceController {
         return context
     }
     
-    static func getContext(provider: PersistenceController) -> NSManagedObjectContext {
-        return provider.container.viewContext
-    }
-    
     init(inMemory: Bool = false) {
         container = NSPersistentContainer(name: "Todo")
         
@@ -63,11 +59,32 @@ struct PersistenceController {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
+        createInbox(context: container.viewContext)
         container.viewContext.automaticallyMergesChangesFromParent = true
+    }
+    
+    private func createInbox(context: NSManagedObjectContext) {
+        let fetchRequest: NSFetchRequest<FolderEntity> = FolderEntity.getAllFetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "name_ == %@", "Inbox")
+        
+        do {
+            let result = try context.fetch(fetchRequest)
+            if result.isEmpty {
+                let folder = FolderEntity(context: context)
+                folder.name_ = "Inbox"
+                try context.save()
+            }
+        } catch {
+            print("Error creating inbox: \(error)")
+        }
     }
     
     static func exisits(_ todo: TodoEntity, in context: NSManagedObjectContext) -> TodoEntity? {
         try? context.existingObject(with: todo.objectID) as? TodoEntity
+    }
+    
+    static func findFolderByName(_ name: String, in context: NSManagedObjectContext) -> FolderEntity? {
+        try? context.fetch(FolderEntity.getAllFetchRequest()).first {$0.name == name}
     }
     
     static func delete(_ todo: TodoEntity, in context: NSManagedObjectContext) throws {

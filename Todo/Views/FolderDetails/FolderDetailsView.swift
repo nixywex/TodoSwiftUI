@@ -10,8 +10,7 @@ import SwiftUI
 struct FolderDetailsView: View {
     @ObservedObject var vm: FolderDetailsViewModel
     @Environment(\.dismiss) var dismiss
-    @Environment(\.managedObjectContext) var context
-
+    
     var body: some View {
         NavigationStack {
             List {
@@ -21,13 +20,12 @@ struct FolderDetailsView: View {
                 
                 Section("Actions") {
                     Button(action: {
-                        vm.configDeleteAlert()
+                        vm.configAlert(alertType: .delete)
                     }, label: {
                         Text("\(Image(systemName: "trash")) Delete folder")
                             .foregroundStyle(.red)
                     })
                     Button(action: {
-                        //FIXME: View will not updated
                         if vm.handleSave() {
                             dismiss()
                         }
@@ -39,18 +37,21 @@ struct FolderDetailsView: View {
             }
             .navigationTitle(vm.folder.name)
             .navigationBarTitleDisplayMode(.inline)
-            .alert(vm.alertController.alertHeader, isPresented: $vm.isAlertShowed) {
-                //FIXME: View will not dismissed
-                ForEach(vm.alertController.buttons) { button in
-                    button
+            .alert(vm.alertTitle, isPresented: $vm.isAlertShowed) {
+                Button(vm.alertType == .delete ? "Cancel" : "OK", role: .cancel) {}
+                if vm.alertType == .delete {
+                    Button("Delete", role: .destructive) {
+                        vm.deleteFolder()
+                        dismiss()
+                    }
                 }
             } message: {
-                Text(vm.alertController.alertText)
+                Text(vm.alertText)
             }
         }
     }
 }
 
-//#Preview {
-//    FolderDetailsView(folder: FolderEntity.getPreviewFolder(context: PersistenceController.preview.container.viewContext), deleteAction: () -> Void)
-//}
+#Preview {
+    FolderDetailsView(vm: FolderDetailsViewModel(folder: FolderEntity.getPreviewFolder(context: PersistenceController.preview.container.viewContext), context: PersistenceController.preview.container.viewContext))
+}

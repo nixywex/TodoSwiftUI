@@ -8,28 +8,54 @@
 import SwiftUI
 
 struct FoldersListView: View {
-    @Environment(\.managedObjectContext) var managedObjectContext
     var folders: FetchRequest<FolderEntity>
+
+    @Environment(\.managedObjectContext) var managedObjectContext
     
+    @State var isPresented: Bool
+
     init() {
         self.folders = FetchRequest(fetchRequest: FolderEntity.getAllFetchRequest())
+        self.isPresented = false
     }
-
+    
     var body: some View {
         List {
-            ForEach(folders.wrappedValue) { folder in
-                NavigationLink(destination: {
-                    FolderView(folder: folder)
-                }, label: {
-                    FolderListItemView(folder: folder)
-                })
-                .swipeActions {
-                    Button(action: {
-                        handleDelete(folder)
+            Section {
+                if let inbox = folders.wrappedValue.first(where: {$0.name_ == "Inbox"}) {
+                    NavigationLink(destination: {
+                        FolderView(folder: inbox)
                     }, label: {
-                        Text("Delete")
+                        FolderListItemView(folder: inbox)
+                            .fontWeight(.semibold)
                     })
-                    .tint(.red)
+                }
+            }
+            
+            ForEach(folders.wrappedValue) { folder in
+                if folder.name != "Inbox" {
+                    NavigationLink(destination: {
+                        FolderView(folder: folder)
+                    }, label: {
+                        FolderListItemView(folder: folder)
+                    })
+                    .swipeActions {
+                        Button(action: {
+                            handleDelete(folder)
+                        }, label: {
+                            Text("Delete")
+                        })
+                        .tint(.red)
+                        
+                        NavigationLink(destination: {
+                            FolderDetailsView(vm: FolderDetailsViewModel(folder: folder, context: managedObjectContext))
+                        }, label: {
+                            Button(action: {}, label: {
+                                Text("Edit")
+                            })
+                        })
+                        .tint(.blue)
+                    }
                 }
             }
         }
