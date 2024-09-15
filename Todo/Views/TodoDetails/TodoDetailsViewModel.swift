@@ -51,6 +51,10 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todo.todoDescription = self.todoDescription
         self.todo.startDate_ = self.isStartDateOn ? self.todoStartDate : nil
         self.todo.priority = self.todoPriority
+        
+        let currentFolder = todo.folder!
+        currentFolder.handleActiveTodosCounter(todo: self.todo, folder: self.todoFolder)
+        
         self.todo.folder = self.todoFolder
                 
         return PersistenceController.saveChanges(context: self.context)
@@ -59,6 +63,7 @@ final class TodoDetailsViewModel: ObservableObject {
     func handleDelete(todo: TodoEntity) {
         do {
             guard let existingTodo = PersistenceController.exisits(todo, in: self.context) else { return }
+            todo.folder?.subtract()
             try PersistenceController.delete(existingTodo, in: self.context)
         } catch { print(error) }
     }

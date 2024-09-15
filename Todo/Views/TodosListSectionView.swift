@@ -56,6 +56,7 @@ private extension TodosListSectionView {
     func handleDelete(todo: TodoEntity) {
         do {
             guard let existingTodo = PersistenceController.exisits(todo, in: self.managedObjectContext) else {fatalError()}
+            folder.subtract()
             try PersistenceController.delete(existingTodo, in: self.managedObjectContext)
         } catch {
             print(error)
@@ -64,6 +65,7 @@ private extension TodosListSectionView {
     
     func handleToggle(todo: TodoEntity) {
         todo.isDone.toggle()
+        folder.handleActiveTodosCounter(todo: todo)
         let _ = PersistenceController.saveChanges(context: self.managedObjectContext)
     }
 }

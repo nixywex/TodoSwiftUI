@@ -69,9 +69,12 @@ struct TodoDetailsView: View {
                             Text("High").tag(TodoEntity.Priority.high)
                         }
                     }
-                    Picker("Folder", selection: $vm.todoFolder) {
-                        ForEach(folders, id: \.id) { folder in
-                            Text(folder.name).tag(folder)
+                    HStack {
+                        Image(systemName: "folder")
+                        Picker("Folder", selection: $vm.todoFolder) {
+                            ForEach(folders, id: \.id) { folder in
+                                Text(folder.name).tag(folder)
+                            }
                         }
                     }
                     TextField("Description", text: $vm.todoDescription, axis: .vertical)

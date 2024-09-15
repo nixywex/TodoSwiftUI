@@ -64,13 +64,13 @@ private extension FolderView {
     private func handleSortTypeChange(sortType: TodoEntity.SortType) {
         do {
             let value = try JSONEncoder().encode(sortType)
-            UserDefaults.standard.setValue(value, forKey: "SORT_TYPE_KEY")
+            UserDefaults.standard.setValue(value, forKey: "TODOS_SORT_TYPE_KEY")
         }
         catch { print(error) }
     }
     
     private func getSortType() -> TodoEntity.SortType {
-        guard let data = UserDefaults.standard.data(forKey: "SORT_TYPE_KEY") else { return .deadline }
+        guard let data = UserDefaults.standard.data(forKey: "TODOS_SORT_TYPE_KEY") else { return .deadline }
         do {
             let sortType = try JSONDecoder().decode(TodoEntity.SortType.self, from: data)
             return sortType

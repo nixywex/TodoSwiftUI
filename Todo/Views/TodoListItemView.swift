@@ -46,6 +46,7 @@ struct TodoListItemView: View {
 private extension TodoListItemView {
     func handleToggle(todo: TodoEntity) {
         todo.isDone.toggle()
+        todo.folder?.handleActiveTodosCounter(todo: todo)
         let _ = PersistenceController.saveChanges(context: self.managedObjectContext)
     }
     

@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 
 final class FolderDetailsViewModel: ObservableObject {
-    private var folder: FolderEntity
+    var folder: FolderEntity
     var context: NSManagedObjectContext
     
     @Published var folderName: String

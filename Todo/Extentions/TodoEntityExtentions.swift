@@ -76,6 +76,27 @@ extension TodoEntity {
         set { self.priority_ = Int16(newValue.rawValue) }
     }
     
+    var priorityCount: Double {
+        let difference = self.deadline.timeIntervalSinceNow
+        var coefficient = 0.0
+        
+        switch self.priority {
+        case .low:
+            coefficient = 1/2
+        case .middle:
+            coefficient = 1
+        case .high:
+            coefficient = 2
+        }
+        
+        var result = 0.0
+        
+        if difference >= 0 { result = difference / coefficient }
+        else { result = difference * coefficient }
+        
+        return result
+    }
+    
     var prettyDate: String {
         guard self.startDate_ != nil else { return self.deadline.formatted(.dateTime.day().month()) }
         return "\(self.startDate_!.formatted(.dateTime.day().month())) - \(self.deadline.formatted(.dateTime.day().month()))"

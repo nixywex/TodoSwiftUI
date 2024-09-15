@@ -14,8 +14,8 @@ struct FoldersListView: View {
     
     @State var isPresented: Bool
 
-    init() {
-        self.folders = FetchRequest(fetchRequest: FolderEntity.getAllFetchRequest())
+    init(sortType: FolderEntity.SortType) {
+        self.folders = FetchRequest(fetchRequest: FolderEntity.getSortedFetchRequest(sortType: sortType))
         self.isPresented = false
     }
     
@@ -70,6 +70,6 @@ extension FoldersListView {
 }
 
 #Preview {
-    FoldersListView()
+    FoldersListView(sortType: .folderName)
         .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

@@ -32,6 +32,7 @@ final class NewTodoViewModel: ObservableObject {
         let newTodo = TodoEntity.createNewTodo(context: self.context, text: self.text, deadline: self.deadline,
                                                startDate: self.startDate, description: self.description, priority: self.priority)
         self.folder.addToTodos(newTodo)
+        folder.add()
         let _ = PersistenceController.saveChanges(context: context)
     }
     

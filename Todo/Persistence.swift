@@ -70,8 +70,7 @@ struct PersistenceController {
         do {
             let result = try context.fetch(fetchRequest)
             if result.isEmpty {
-                let folder = FolderEntity(context: context)
-                folder.name_ = "Inbox"
+                _ = FolderEntity.createNewFolder(context: context, name: "Inbox")
                 try context.save()
             }
         } catch {
