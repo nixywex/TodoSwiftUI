@@ -13,7 +13,7 @@ struct TodoApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            MainView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }

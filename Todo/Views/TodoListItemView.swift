@@ -11,6 +11,7 @@ import CoreData
 struct TodoListItemView: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     @ObservedObject var todo: TodoEntity
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack {
@@ -26,15 +27,15 @@ struct TodoListItemView: View {
             VStack {
                 Text(self.todo.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .foregroundStyle(todo.isDone ? .gray : .black)
+                    .foregroundStyle(todo.isDone ? .gray : colorScheme == .dark ? .white : .black)
                 Text(self.todo.prettyDate)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fontWeight(.light)
-                    .foregroundStyle(todo.isDone ? .gray : getDeadlineColor(deadline: todo.deadline))
+                    .foregroundStyle(todo.isDone ? .secondary : getDeadlineColor(deadline: todo.deadline))
             }
             Spacer()
             Image(systemName: "circle.fill")
-                .foregroundStyle(todo.isDone ? .gray : getPriorityColor(priority: todo.priority))
+                .foregroundStyle(todo.isDone ? Color.secondary.opacity(0) : getPriorityColor(priority: todo.priority))
                 .font(.system(size: 12))
                 .opacity(0.6)
             
@@ -53,9 +54,9 @@ private extension TodoListItemView {
     func getDeadlineColor(deadline: Date) -> Color {
         let result = Calendar.current.compare(deadline, to: Date.now, toGranularity: .day)
         
-        if result == .orderedAscending { return .red}
+        if result == .orderedAscending { return .red }
         else if result == .orderedSame { return .orange }
-        return .black
+        return .secondary
     }
     
     func getPriorityColor(priority: TodoEntity.Priority) -> Color {

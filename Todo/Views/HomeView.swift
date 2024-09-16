@@ -2,69 +2,46 @@
 //  HomeView.swift
 //  Todo
 //
-//  Created by Nikita Sheludko on 28.08.24.
+//  Created by Nikita Sheludko on 16.09.24.
 //
 
 import SwiftUI
 
 struct HomeView: View {
-    @State var isNewFolderSheetShowed = false
-    @State var folderSortType: FolderEntity.SortType = .folderName
+    @FetchRequest(fetchRequest: TodoEntity.getAllFetchRequest()) 
+    var todos: FetchedResults<TodoEntity>
     
-    init() { _folderSortType = State(initialValue: getSortType()) }
+    var sortedTodos: [TodoEntity] {
+        Array(todos.filter { !$0.isDone }.sorted { $0.priorityCount < $1.priorityCount }.prefix(5))
+    }
     
     var body: some View {
         NavigationStack {
-            FoldersListView(sortType: folderSortType)
-                .navigationTitle("Your folders")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Menu {
-                            Section() {
-                                Text("Sort by")
-                                Picker("Sort by", selection: $folderSortType) {
-                                    Text("Name").tag(FolderEntity.SortType.folderName)
-                                    Text("Current todos").tag(FolderEntity.SortType.numberOfTodos)
-                                }
-                                .onChange(of: folderSortType) {
-                                    self.handleSortTypeChange(sortType: self.folderSortType)
-                                }
-                            }
-                        } label: {
-                            Image(systemName: "line.3.horizontal.decrease.circle")
+            GroupBox("Overview") {
+                if sortedTodos.isEmpty {
+                    Text("You have no todos. Well done! 😁")
+                        .padding(.vertical, 40)
+                } else {
+                    List {
+                        ForEach(sortedTodos) { todo in
+                            NavigationLink(destination: {
+                                TodoDetailsView(todo: todo)
+                            }, label: {
+                                TodoListItemView(todo: todo)
+                            })
                         }
                     }
-                    
-                    ToolbarItem(placement: .topBarTrailing)  {
-                        Button(action: {
-                            isNewFolderSheetShowed.toggle()
-                        }, label: {
-                            Image(systemName: "plus")
-                        })
-                    }
+                    .offset(y: -15)
+                    .scrollDisabled(true)
                 }
+                Text("\(Image(systemName: "exclamationmark.circle")) Overview shows the top 5 most pressing todos to complete based on priority and deadline.")
+                    .font(.system(.caption))
+                    .foregroundStyle(.gray)
+            }
+            .padding()
+            .navigationTitle("Home")
+            Spacer()
         }
-        .sheet(isPresented: $isNewFolderSheetShowed, content: {
-            NewFolderView()
-        })
-    }
-}
-
-private extension HomeView {
-    private func handleSortTypeChange(sortType: FolderEntity.SortType) {
-        do {
-            let value = try JSONEncoder().encode(sortType)
-            UserDefaults.standard.setValue(value, forKey: "FOLDER_SORT_TYPE_KEY")
-        }
-        catch { print(error) }
-    }
-    
-    private func getSortType() -> FolderEntity.SortType {
-        guard let data = UserDefaults.standard.data(forKey: "FOLDER_SORT_TYPE_KEY") else { return .folderName }
-        do {
-            let sortType = try JSONDecoder().decode(FolderEntity.SortType.self, from: data)
-            return sortType
-        } catch { return .folderName }
     }
 }
 
