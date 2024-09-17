@@ -8,13 +8,17 @@
 import SwiftUI
 
 struct MainView: View {
+    @State var searchTerm = ""
+    
     var body: some View {
         TabView {
-            HomeView()
+            HomeView(searchTerm: searchTerm)
+                .searchable(text: $searchTerm, placement: .navigationBarDrawer, prompt: "Search todos")
                 .tabItem {
                     Image(systemName: "house")
                     Text("Home")
                 }
+            
             FoldersView()
                 .tabItem {
                     Image(systemName: "folder")

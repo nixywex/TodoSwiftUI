@@ -43,6 +43,18 @@ extension TodoEntity {
         return request
     }
     
+    static func getFilteredFetchRequest(searchTerm: String) -> NSFetchRequest<TodoEntity> {
+        let request: NSFetchRequest<TodoEntity> = todosFetchRequest
+        
+        if !searchTerm.isEmpty {
+            request.predicate = NSPredicate(format: "text_ CONTAINS[cd] %@", searchTerm)
+        }
+        
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
+        
+        return request
+    }
+    
     static func getFetchRequest(from folder: FolderEntity) -> NSFetchRequest<TodoEntity> {
         let request: NSFetchRequest<TodoEntity> = todosFetchRequest
         request.predicate = NSPredicate(format: "folder.name_ == %@", folder.name)
