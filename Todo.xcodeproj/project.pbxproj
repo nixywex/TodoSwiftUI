@@ -10,6 +10,7 @@
 		F00FCBB62C73CA8900F45A30 /* TodoDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00FCBB52C73CA8900F45A30 /* TodoDetailsView.swift */; };
 		F00FCBB92C73CBE300F45A30 /* TodoDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00FCBB82C73CBE300F45A30 /* TodoDetailsViewModel.swift */; };
 		F00FCBBD2C74E88D00F45A30 /* TodosListSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00FCBBC2C74E88D00F45A30 /* TodosListSectionView.swift */; };
+		F0110D802CD02C2B00EE54AD /* OtherExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0110D7F2CD02C2B00EE54AD /* OtherExtentions.swift */; };
 		F0267DA52C7FAA5C001C2FEB /* FoldersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DA42C7FAA5C001C2FEB /* FoldersListView.swift */; };
 		F0267DAA2C7FAFA5001C2FEB /* NewFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DA92C7FAFA5001C2FEB /* NewFolderView.swift */; };
 		F0267DAC2C7FBFF2001C2FEB /* FoldersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DAB2C7FBFF2001C2FEB /* FoldersView.swift */; };
@@ -21,23 +22,39 @@
 		F0267DBA2C808D50001C2FEB /* AlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DB92C808D50001C2FEB /* AlertController.swift */; };
 		F04777B22C73909600A3C7FA /* PreviewExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04777B12C73909600A3C7FA /* PreviewExtentions.swift */; };
 		F04777B42C73984000A3C7FA /* TodoListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04777B32C73984000A3C7FA /* TodoListItemView.swift */; };
+		F04E4AA82CCD0B8E00D931CF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F04E4AA72CCD0B8E00D931CF /* FirebaseFirestore */; };
+		F04E4AAA2CCD0FBB00D931CF /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04E4AA92CCD0FBB00D931CF /* UserManager.swift */; };
 		F0774FCD2C986A7C00A9CA07 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0774FCC2C986A7C00A9CA07 /* MainView.swift */; };
 		F0774FCF2C986B1600A9CA07 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0774FCE2C986B1600A9CA07 /* HomeView.swift */; };
+		F0815EA92CCE4F8000A17781 /* FolderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0815EA82CCE4F8000A17781 /* FolderManager.swift */; };
+		F0815EAC2CCE55CF00A17781 /* NewFodlerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0815EAB2CCE55CF00A17781 /* NewFodlerViewModel.swift */; };
+		F0815EAE2CCE5A4500A17781 /* TodoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0815EAD2CCE5A4500A17781 /* TodoManager.swift */; };
+		F0815EB62CCE74F000A17781 /* FolderViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0815EB52CCE74F000A17781 /* FolderViewModel.swift */; };
 		F08FFC362C7245BE0011A378 /* TodoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC352C7245BE0011A378 /* TodoApp.swift */; };
 		F08FFC382C7245BE0011A378 /* FolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC372C7245BE0011A378 /* FolderView.swift */; };
 		F08FFC3A2C7245C00011A378 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F08FFC392C7245C00011A378 /* Assets.xcassets */; };
 		F08FFC3D2C7245C00011A378 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F08FFC3C2C7245C00011A378 /* Preview Assets.xcassets */; };
 		F08FFC3F2C7245C00011A378 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC3E2C7245C00011A378 /* Persistence.swift */; };
 		F08FFC422C7245C00011A378 /* Todo.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC402C7245C00011A378 /* Todo.xcdatamodeld */; };
-		F08FFC4A2C7295F70011A378 /* TodosListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC492C7295F70011A378 /* TodosListView.swift */; };
 		F08FFC4C2C7299F20011A378 /* NewTodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC4B2C7299F20011A378 /* NewTodoView.swift */; };
 		F08FFC512C7379970011A378 /* NewTodoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08FFC502C7379970011A378 /* NewTodoViewModel.swift */; };
+		F0D684CA2CCBDBB3003DB0B1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F0D684C92CCBDBB3003DB0B1 /* FirebaseAuth */; };
+		F0D684CC2CCBDBB3003DB0B1 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F0D684CB2CCBDBB3003DB0B1 /* FirebaseFirestore */; };
+		F0D684CE2CCBE471003DB0B1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F0D684CD2CCBE470003DB0B1 /* GoogleService-Info.plist */; };
+		F0D684D02CCBE5A2003DB0B1 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D684CF2CCBE5A2003DB0B1 /* LoginView.swift */; };
+		F0D684D22CCBE75E003DB0B1 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D684D12CCBE75E003DB0B1 /* SignUpView.swift */; };
+		F0D684DD2CCBF545003DB0B1 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D684DC2CCBF545003DB0B1 /* ProfileView.swift */; };
+		F0D684E12CCBF6A1003DB0B1 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D684E02CCBF6A1003DB0B1 /* ProfileViewModel.swift */; };
+		F0D684E32CCC139F003DB0B1 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D684E22CCC139F003DB0B1 /* AuthManager.swift */; };
+		F0D684E62CCC15A9003DB0B1 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D684E52CCC15A9003DB0B1 /* LoginViewModel.swift */; };
+		F0D684EA2CCC17EE003DB0B1 /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D684E92CCC17EE003DB0B1 /* SignUpViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		F00FCBB52C73CA8900F45A30 /* TodoDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailsView.swift; sourceTree = "<group>"; };
 		F00FCBB82C73CBE300F45A30 /* TodoDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailsViewModel.swift; sourceTree = "<group>"; };
 		F00FCBBC2C74E88D00F45A30 /* TodosListSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosListSectionView.swift; sourceTree = "<group>"; };
+		F0110D7F2CD02C2B00EE54AD /* OtherExtentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherExtentions.swift; sourceTree = "<group>"; };
 		F0267DA42C7FAA5C001C2FEB /* FoldersListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersListView.swift; sourceTree = "<group>"; };
 		F0267DA92C7FAFA5001C2FEB /* NewFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFolderView.swift; sourceTree = "<group>"; };
 		F0267DAB2C7FBFF2001C2FEB /* FoldersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersView.swift; sourceTree = "<group>"; };
@@ -49,8 +66,13 @@
 		F0267DB92C808D50001C2FEB /* AlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertController.swift; sourceTree = "<group>"; };
 		F04777B12C73909600A3C7FA /* PreviewExtentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewExtentions.swift; sourceTree = "<group>"; };
 		F04777B32C73984000A3C7FA /* TodoListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListItemView.swift; sourceTree = "<group>"; };
+		F04E4AA92CCD0FBB00D931CF /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
 		F0774FCC2C986A7C00A9CA07 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		F0774FCE2C986B1600A9CA07 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		F0815EA82CCE4F8000A17781 /* FolderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderManager.swift; sourceTree = "<group>"; };
+		F0815EAB2CCE55CF00A17781 /* NewFodlerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFodlerViewModel.swift; sourceTree = "<group>"; };
+		F0815EAD2CCE5A4500A17781 /* TodoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoManager.swift; sourceTree = "<group>"; };
+		F0815EB52CCE74F000A17781 /* FolderViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderViewModel.swift; sourceTree = "<group>"; };
 		F08FFC322C7245BE0011A378 /* Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F08FFC352C7245BE0011A378 /* TodoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoApp.swift; sourceTree = "<group>"; };
 		F08FFC372C7245BE0011A378 /* FolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderView.swift; sourceTree = "<group>"; };
@@ -58,10 +80,17 @@
 		F08FFC3C2C7245C00011A378 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F08FFC3E2C7245C00011A378 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		F08FFC412C7245C00011A378 /* Todo.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Todo.xcdatamodel; sourceTree = "<group>"; };
-		F08FFC492C7295F70011A378 /* TodosListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosListView.swift; sourceTree = "<group>"; };
 		F08FFC4B2C7299F20011A378 /* NewTodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTodoView.swift; sourceTree = "<group>"; };
 		F08FFC502C7379970011A378 /* NewTodoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTodoViewModel.swift; sourceTree = "<group>"; };
 		F0B1F1F22C7759A2003ADBB2 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		F0D684CD2CCBE470003DB0B1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		F0D684CF2CCBE5A2003DB0B1 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		F0D684D12CCBE75E003DB0B1 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
+		F0D684DC2CCBF545003DB0B1 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		F0D684E02CCBF6A1003DB0B1 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		F0D684E22CCC139F003DB0B1 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
+		F0D684E52CCC15A9003DB0B1 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		F0D684E92CCC17EE003DB0B1 /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +98,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0D684CA2CCBDBB3003DB0B1 /* FirebaseAuth in Frameworks */,
+				F0D684CC2CCBDBB3003DB0B1 /* FirebaseFirestore in Frameworks */,
+				F04E4AA82CCD0B8E00D931CF /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +122,7 @@
 				F04777B12C73909600A3C7FA /* PreviewExtentions.swift */,
 				F0267DB02C808281001C2FEB /* TodoEntityExtentions.swift */,
 				F0267DB22C8082AB001C2FEB /* FolderEntityExtentions.swift */,
+				F0110D7F2CD02C2B00EE54AD /* OtherExtentions.swift */,
 			);
 			path = Extentions;
 			sourceTree = "<group>";
@@ -103,11 +136,37 @@
 			path = FolderDetails;
 			sourceTree = "<group>";
 		};
+		F04E4AA62CCD0B8E00D931CF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F0815EAA2CCE55C000A17781 /* NewFolder */ = {
+			isa = PBXGroup;
+			children = (
+				F0267DA92C7FAFA5001C2FEB /* NewFolderView.swift */,
+				F0815EAB2CCE55CF00A17781 /* NewFodlerViewModel.swift */,
+			);
+			path = NewFolder;
+			sourceTree = "<group>";
+		};
+		F0815EB42CCE74DF00A17781 /* Folder */ = {
+			isa = PBXGroup;
+			children = (
+				F08FFC372C7245BE0011A378 /* FolderView.swift */,
+				F0815EB52CCE74F000A17781 /* FolderViewModel.swift */,
+			);
+			path = Folder;
+			sourceTree = "<group>";
+		};
 		F08FFC292C7245BE0011A378 = {
 			isa = PBXGroup;
 			children = (
 				F0B1F1F22C7759A2003ADBB2 /* README.md */,
 				F08FFC342C7245BE0011A378 /* Todo */,
+				F04E4AA62CCD0B8E00D931CF /* Frameworks */,
 				F08FFC332C7245BE0011A378 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -123,14 +182,14 @@
 		F08FFC342C7245BE0011A378 /* Todo */ = {
 			isa = PBXGroup;
 			children = (
+				F0D684EB2CCC298C003DB0B1 /* Controllers */,
 				F0267DAF2C808263001C2FEB /* Extentions */,
 				F08FFC482C7295C40011A378 /* Views */,
 				F08FFC352C7245BE0011A378 /* TodoApp.swift */,
-				F08FFC3E2C7245C00011A378 /* Persistence.swift */,
 				F08FFC402C7245C00011A378 /* Todo.xcdatamodeld */,
 				F08FFC392C7245C00011A378 /* Assets.xcassets */,
+				F0D684CD2CCBE470003DB0B1 /* GoogleService-Info.plist */,
 				F08FFC3B2C7245C00011A378 /* Preview Content */,
-				F0267DB92C808D50001C2FEB /* AlertController.swift */,
 			);
 			path = Todo;
 			sourceTree = "<group>";
@@ -146,19 +205,21 @@
 		F08FFC482C7295C40011A378 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				F0815EB42CCE74DF00A17781 /* Folder */,
+				F0815EAA2CCE55C000A17781 /* NewFolder */,
+				F0D684E72CCC17D6003DB0B1 /* SignUp */,
+				F0D684E42CCC158A003DB0B1 /* Login */,
+				F0D684DB2CCBF537003DB0B1 /* Profile */,
 				F0267DB62C808A44001C2FEB /* FolderDetails */,
 				F08FFC4D2C7379780011A378 /* NewTodo */,
 				F00FCBB72C73CBD200F45A30 /* TodoDetails */,
 				F0267DAB2C7FBFF2001C2FEB /* FoldersView.swift */,
-				F0267DA42C7FAA5C001C2FEB /* FoldersListView.swift */,
 				F0267DAD2C7FC37F001C2FEB /* FolderListItemView.swift */,
-				F0267DA92C7FAFA5001C2FEB /* NewFolderView.swift */,
-				F08FFC372C7245BE0011A378 /* FolderView.swift */,
-				F08FFC492C7295F70011A378 /* TodosListView.swift */,
 				F00FCBBC2C74E88D00F45A30 /* TodosListSectionView.swift */,
-				F04777B32C73984000A3C7FA /* TodoListItemView.swift */,
 				F0774FCC2C986A7C00A9CA07 /* MainView.swift */,
 				F0774FCE2C986B1600A9CA07 /* HomeView.swift */,
+				F04777B32C73984000A3C7FA /* TodoListItemView.swift */,
+				F0267DA42C7FAA5C001C2FEB /* FoldersListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -170,6 +231,46 @@
 				F08FFC502C7379970011A378 /* NewTodoViewModel.swift */,
 			);
 			path = NewTodo;
+			sourceTree = "<group>";
+		};
+		F0D684DB2CCBF537003DB0B1 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				F0D684DC2CCBF545003DB0B1 /* ProfileView.swift */,
+				F0D684E02CCBF6A1003DB0B1 /* ProfileViewModel.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		F0D684E42CCC158A003DB0B1 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				F0D684CF2CCBE5A2003DB0B1 /* LoginView.swift */,
+				F0D684E52CCC15A9003DB0B1 /* LoginViewModel.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		F0D684E72CCC17D6003DB0B1 /* SignUp */ = {
+			isa = PBXGroup;
+			children = (
+				F0D684D12CCBE75E003DB0B1 /* SignUpView.swift */,
+				F0D684E92CCC17EE003DB0B1 /* SignUpViewModel.swift */,
+			);
+			path = SignUp;
+			sourceTree = "<group>";
+		};
+		F0D684EB2CCC298C003DB0B1 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				F08FFC3E2C7245C00011A378 /* Persistence.swift */,
+				F0D684E22CCC139F003DB0B1 /* AuthManager.swift */,
+				F0267DB92C808D50001C2FEB /* AlertController.swift */,
+				F04E4AA92CCD0FBB00D931CF /* UserManager.swift */,
+				F0815EA82CCE4F8000A17781 /* FolderManager.swift */,
+				F0815EAD2CCE5A4500A17781 /* TodoManager.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -216,6 +317,9 @@
 				Base,
 			);
 			mainGroup = F08FFC292C7245BE0011A378;
+			packageReferences = (
+				F0D684C82CCBDBB3003DB0B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = F08FFC332C7245BE0011A378 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -232,6 +336,7 @@
 			files = (
 				F08FFC3D2C7245C00011A378 /* Preview Assets.xcassets in Resources */,
 				F08FFC3A2C7245C00011A378 /* Assets.xcassets in Resources */,
+				F0D684CE2CCBE471003DB0B1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,26 +349,38 @@
 			files = (
 				F08FFC512C7379970011A378 /* NewTodoViewModel.swift in Sources */,
 				F00FCBB92C73CBE300F45A30 /* TodoDetailsViewModel.swift in Sources */,
+				F0815EB62CCE74F000A17781 /* FolderViewModel.swift in Sources */,
+				F0D684E62CCC15A9003DB0B1 /* LoginViewModel.swift in Sources */,
 				F0267DB52C808905001C2FEB /* FolderDetailsView.swift in Sources */,
 				F08FFC3F2C7245C00011A378 /* Persistence.swift in Sources */,
+				F0815EA92CCE4F8000A17781 /* FolderManager.swift in Sources */,
 				F0267DBA2C808D50001C2FEB /* AlertController.swift in Sources */,
 				F0267DAC2C7FBFF2001C2FEB /* FoldersView.swift in Sources */,
+				F0D684D02CCBE5A2003DB0B1 /* LoginView.swift in Sources */,
 				F0267DB12C808281001C2FEB /* TodoEntityExtentions.swift in Sources */,
 				F0774FCD2C986A7C00A9CA07 /* MainView.swift in Sources */,
-				F08FFC4A2C7295F70011A378 /* TodosListView.swift in Sources */,
+				F0D684E12CCBF6A1003DB0B1 /* ProfileViewModel.swift in Sources */,
 				F0267DAE2C7FC37F001C2FEB /* FolderListItemView.swift in Sources */,
 				F0267DB32C8082AB001C2FEB /* FolderEntityExtentions.swift in Sources */,
 				F00FCBB62C73CA8900F45A30 /* TodoDetailsView.swift in Sources */,
+				F0D684EA2CCC17EE003DB0B1 /* SignUpViewModel.swift in Sources */,
 				F08FFC382C7245BE0011A378 /* FolderView.swift in Sources */,
+				F0815EAC2CCE55CF00A17781 /* NewFodlerViewModel.swift in Sources */,
 				F00FCBBD2C74E88D00F45A30 /* TodosListSectionView.swift in Sources */,
 				F0267DA52C7FAA5C001C2FEB /* FoldersListView.swift in Sources */,
+				F0D684D22CCBE75E003DB0B1 /* SignUpView.swift in Sources */,
 				F04777B22C73909600A3C7FA /* PreviewExtentions.swift in Sources */,
 				F08FFC4C2C7299F20011A378 /* NewTodoView.swift in Sources */,
+				F0D684DD2CCBF545003DB0B1 /* ProfileView.swift in Sources */,
+				F0815EAE2CCE5A4500A17781 /* TodoManager.swift in Sources */,
+				F04E4AAA2CCD0FBB00D931CF /* UserManager.swift in Sources */,
 				F04777B42C73984000A3C7FA /* TodoListItemView.swift in Sources */,
+				F0D684E32CCC139F003DB0B1 /* AuthManager.swift in Sources */,
 				F08FFC362C7245BE0011A378 /* TodoApp.swift in Sources */,
 				F0267DB82C808A59001C2FEB /* FolderDetailsViewModel.swift in Sources */,
 				F0267DAA2C7FAFA5001C2FEB /* NewFolderView.swift in Sources */,
 				F0774FCF2C986B1600A9CA07 /* HomeView.swift in Sources */,
+				F0110D802CD02C2B00EE54AD /* OtherExtentions.swift in Sources */,
 				F08FFC422C7245C00011A378 /* Todo.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -478,6 +595,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F0D684C82CCBDBB3003DB0B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F04E4AA72CCD0B8E00D931CF /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F0D684C82CCBDBB3003DB0B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		F0D684C92CCBDBB3003DB0B1 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F0D684C82CCBDBB3003DB0B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		F0D684CB2CCBDBB3003DB0B1 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F0D684C82CCBDBB3003DB0B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		F08FFC402C7245C00011A378 /* Todo.xcdatamodeld */ = {

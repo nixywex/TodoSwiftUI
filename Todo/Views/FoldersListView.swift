@@ -8,68 +8,47 @@
 import SwiftUI
 
 struct FoldersListView: View {
-    var folders: FetchRequest<FolderEntity>
-
-    @Environment(\.managedObjectContext) var managedObjectContext
+    @StateObject var vm = FoldersListViewModel()
     
-    @State var isPresented: Bool
-
-    init(sortType: FolderEntity.SortType) {
-        self.folders = FetchRequest(fetchRequest: FolderEntity.getSortedFetchRequest(sortType: sortType))
-        self.isPresented = false
-    }
+    var folders: [Folder]
+    var foldersCallback: () async throws -> Void
     
     var body: some View {
         List {
-            Section {
-                if let inbox = folders.wrappedValue.first(where: {$0.name_ == "Inbox"}) {
-                    NavigationLink(destination: {
-                        FolderView(folder: inbox)
-                    }, label: {
-                        FolderListItemView(folder: inbox)
-                            .fontWeight(.semibold)
-                    })
+            ForEach(folders, id: \.id) { folder in
+                NavigationLink(destination: FolderView(vm: FolderViewModel(folder: folder), foldersCallback: foldersCallback)) {
+                    FolderListItemView(folder: folder)
                 }
-            }
-            
-            ForEach(folders.wrappedValue) { folder in
-                if folder.name != "Inbox" {
-                    NavigationLink(destination: {
-                        FolderView(folder: folder)
-                    }, label: {
-                        FolderListItemView(folder: folder)
-                    })
-                    .swipeActions {
-                        Button(action: {
-                            handleDelete(folder)
-                        }, label: {
-                            Text("Delete")
-                        })
-                        .tint(.red)
-                        
-                        NavigationLink(destination: {
-                            FolderDetailsView(vm: FolderDetailsViewModel(folder: folder, context: managedObjectContext))
-                        }, label: {
-                            Button(action: {}, label: {
-                                Text("Edit")
-                            })
-                        })
-                        .tint(.blue)
+                .swipeActions() {
+                    Button("Delete") {
+                        vm.handleDelete(folderId: folder.id)
+                        Task {
+                            try await foldersCallback()
+                        }
                     }
+                    .tint(.red)
                 }
             }
         }
     }
 }
 
-extension FoldersListView {
-    func handleDelete(_ folder: FolderEntity) {
-        managedObjectContext.delete(folder)
-        let _ = PersistenceController.saveChanges(context: managedObjectContext)
+final class FoldersListViewModel: ObservableObject {
+    @Published var folders: [Folder]? = nil
+    
+    func fetchFolders() async throws {
+        let userId = try await UserManager.shared.fetchCurrentUser().userId
+        let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
+        
+        DispatchQueue.main.async { self.folders = folders }
+    }
+    
+    func handleDelete(folderId: String) {
+        FolderManager.shared.deleteFolder(withId: folderId)
+        TodoManager.shared.deleteAllTodosFromFolder(withId: folderId)
     }
 }
 
 #Preview {
-    FoldersListView(sortType: .folderName)
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    FoldersListView(folders: [PreviewExtentions.previewFolder], foldersCallback: PreviewExtentions.previewCallback)
 }

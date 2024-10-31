@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct FolderListItemView: View {
-    @ObservedObject var folder: FolderEntity
+    var folder: Folder
     
     var body: some View {
         VStack {
             Text(folder.name)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Text("You have \(folder.numberOfCurrentTodos) current todos")
+            Text("You have \(folder.numberOfActiveTodos) active todos")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .fontWeight(.light)
                 .foregroundStyle(.gray)
@@ -23,5 +23,5 @@ struct FolderListItemView: View {
 }
 
 #Preview {
-    FolderListItemView(folder: FolderEntity.getPreviewFolder(context: PersistenceController.preview.container.viewContext))
+    FolderListItemView(folder: PreviewExtentions.previewFolder)
 }

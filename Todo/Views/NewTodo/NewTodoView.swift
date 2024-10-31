@@ -10,7 +10,7 @@ import SwiftUI
 struct NewTodoView: View {
     @Environment(\.dismiss) var dismiss
     
-    @ObservedObject var vm: NewTodoViewModel
+    @StateObject var vm: NewTodoViewModel
     
     var body: some View {
         NavigationStack {
@@ -55,9 +55,9 @@ struct NewTodoView: View {
                         HStack {
                             Image(systemName: "exclamationmark.circle")
                             Picker("Priotity", selection: $vm.priority) {
-                                Text("Low").tag(TodoEntity.Priority.low)
-                                Text("Middle").tag(TodoEntity.Priority.middle)
-                                Text("High").tag(TodoEntity.Priority.high)
+                                Text("Low").tag(Todo.Priority.low)
+                                Text("Middle").tag(Todo.Priority.middle)
+                                Text("High").tag(Todo.Priority.high)
                             }
                         }
                         TextField("Description", text: $vm.description, axis: .vertical)
@@ -68,31 +68,23 @@ struct NewTodoView: View {
                 .toolbar {
                     ToolbarItem (placement: .topBarTrailing) {
                         Button(action: {
-                            withAnimation {
-                                if vm.hanldeSaveButton() {
-                                    dismiss()
-                                }
+                            Task {
+                                if await vm.handleSaveButton() { dismiss() }
                             }
                         }, label: {
                             Text("Add todo").bold()
                         })
                     }
                     ToolbarItem(placement: .topBarLeading) {
-                        Button ("Cancel") {
-                            dismiss()
-                        }
+                        Button ("Cancel") { dismiss() }
                     }
                 }
             }
-        }
-        .alert(vm.alertHeader, isPresented: $vm.isAlertShowed) {
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text(vm.alertText)
         }
     }
 }
 
 #Preview {
-    NewTodoView(vm: .init(context: PersistenceController.preview.container.viewContext, folder: FolderEntity.getPreviewFolder(context: PersistenceController.preview.container.viewContext)))
+    NewTodoView(vm: NewTodoViewModel(folder: PreviewExtentions.previewFolder, callback: PreviewExtentions.previewCallback,
+                                     foldersCallback: PreviewExtentions.previewCallback))
 }

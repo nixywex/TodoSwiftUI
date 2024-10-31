@@ -8,67 +8,64 @@
 import SwiftUI
 
 struct FoldersView: View {
-    @State var isNewFolderSheetShowed = false
-    @State var folderSortType: FolderEntity.SortType = .folderName
-    
-    init() { _folderSortType = State(initialValue: getSortType()) }
+    @StateObject var vm = FoldersViewModel()
     
     var body: some View {
         NavigationStack {
-            FoldersListView(sortType: folderSortType)
-                .navigationTitle("Your folders")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Menu {
-                            Section() {
-                                Text("Sort by")
-                                Picker("Sort by", selection: $folderSortType) {
-                                    Text("Name").tag(FolderEntity.SortType.folderName)
-                                    Text("Current todos").tag(FolderEntity.SortType.numberOfTodos)
-                                }
-                                .onChange(of: folderSortType) {
-                                    self.handleSortTypeChange(sortType: self.folderSortType)
-                                }
-                            }
-                        } label: {
-                            Image(systemName: "line.3.horizontal.decrease")
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .topBarTrailing)  {
-                        Button(action: {
-                            isNewFolderSheetShowed.toggle()
-                        }, label: {
-                            Image(systemName: "plus")
-                        })
-                    }
+            VStack {
+                if let folders = vm.folders, folders.isEmpty {
+                    Text("You don't have any folders yet. Create one to get started!")
+                } else if let folders = vm.folders {
+                    FoldersListView(folders: folders, foldersCallback: vm.fetchFolders)
+                } else {
+                    Text("Loading")
                 }
+            }
+            .navigationTitle("Your folders")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing)  {
+                    Button(action: {
+                        vm.isNewFolderSheetShowed.toggle()
+                    }, label: {
+                        Image(systemName: "plus")
+                    })
+                }
+            }
         }
-        .sheet(isPresented: $isNewFolderSheetShowed, content: {
-            NewFolderView()
+        .task {
+            do { try await vm.fetchFolders() }
+            catch { print("Error fetching folders: \(error.localizedDescription)") }
+        }
+        .sheet(isPresented: $vm.isNewFolderSheetShowed, content: {
+            NewFolderView(callback: vm.fetchFolders)
         })
     }
 }
 
-private extension FoldersView {
-    private func handleSortTypeChange(sortType: FolderEntity.SortType) {
-        do {
-            let value = try JSONEncoder().encode(sortType)
-            UserDefaults.standard.setValue(value, forKey: "FOLDER_SORT_TYPE_KEY")
-        }
-        catch { print(error) }
+final class FoldersViewModel: ObservableObject {
+    @Published var isNewFolderSheetShowed = false
+    @Published var folders: [Folder]?
+
+    var userId: String?
+    
+    init() {
+        do { self.userId = try AuthManager.shared.getAuthUser().uid }
+        catch { print("Error fetching user id: \(error.localizedDescription)") }
     }
     
-    private func getSortType() -> FolderEntity.SortType {
-        guard let data = UserDefaults.standard.data(forKey: "FOLDER_SORT_TYPE_KEY") else { return .folderName }
-        do {
-            let sortType = try JSONDecoder().decode(FolderEntity.SortType.self, from: data)
-            return sortType
-        } catch { return .folderName }
+    func fetchFolders() async throws {
+        if userId == nil { self.userId = try AuthManager.shared.getAuthUser().uid }
+        
+        guard let userId else { throw URLError(.badURL) }
+        
+        let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
+        
+        DispatchQueue.main.async {
+            self.folders = folders
+        }
     }
 }
 
 #Preview {
     FoldersView()
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 }

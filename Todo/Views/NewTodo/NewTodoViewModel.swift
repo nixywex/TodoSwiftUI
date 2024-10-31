@@ -6,43 +6,37 @@
 //
 
 import Foundation
-import CoreData
 
 final class NewTodoViewModel: ObservableObject {
-    private let folder: FolderEntity
-    private let context: NSManagedObjectContext
-    
-    @Published var isAlertShowed = false
-    @Published var alertHeader = "Data not valid"
-    @Published var alertText = "Enter the correct data and try again :)"
-    
     @Published var isStartDateOn = false
     @Published var text: String = ""
     @Published var deadline: Date = Date()
     @Published var startDate: Date? = nil
     @Published var description: String = ""
-    @Published var priority: TodoEntity.Priority = .middle
+    @Published var priority: Todo.Priority = .middle
     
-    init(context: NSManagedObjectContext, folder: FolderEntity) {
-        self.context = context
+    let folder: Folder
+    var callback: () async throws -> Void
+    var foldersCallback: () async throws -> Void
+    
+    init(folder: Folder, callback: @escaping () async throws -> Void, foldersCallback: @escaping () async throws -> Void) {
         self.folder = folder
+        self.callback = callback
+        self.foldersCallback = foldersCallback
     }
     
-    func addTodo() {
-        let newTodo = TodoEntity.createNewTodo(context: self.context, text: self.text, deadline: self.deadline,
-                                               startDate: self.startDate, description: self.description, priority: self.priority)
-        self.folder.addToTodos(newTodo)
-        folder.add()
-        let _ = PersistenceController.saveChanges(context: context)
-    }
-    
-    func hanldeSaveButton() -> Bool {
-        if !TodoEntity.isDataValid(text: self.text, deadline: self.deadline, startDate: self.startDate) {
-            self.isAlertShowed.toggle()
+    func handleSaveButton() async -> Bool {
+        do {
+            try TodoManager.shared.createNewTodo(folderId: folder.id, deadline: deadline, text: text,
+                                                 priority: priority.rawValue, description: description, startDate: startDate)
+            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: folder.id, to: 1)
+            try await callback()
+            try await foldersCallback()
+            return true
+        } catch {
+            print("Error creating new todo: \(error.localizedDescription)")
             return false
         }
-        addTodo()
-        return true
     }
     
     func handleToggle() {

@@ -8,12 +8,11 @@
 import SwiftUI
 
 struct MainView: View {
-    @State var searchTerm = ""
+    @State private var isLoginViewPresented: Bool = false
     
     var body: some View {
         TabView {
-            HomeView(searchTerm: searchTerm)
-                .searchable(text: $searchTerm, placement: .navigationBarDrawer, prompt: "Search todos")
+            HomeView()
                 .tabItem {
                     Image(systemName: "house")
                     Text("Home")
@@ -24,6 +23,22 @@ struct MainView: View {
                     Image(systemName: "folder")
                     Text("Folders")
                 }
+            
+            ProfileView(isLoginViewPresented: $isLoginViewPresented)
+                .tabItem {
+                    Image(systemName: "person")
+                    Text("Profile")
+                }
+            
+        }
+        .onAppear {
+            let authUser = try? AuthManager.shared.getAuthUser()
+            self.isLoginViewPresented = authUser == nil
+        }
+        .fullScreenCover(isPresented: $isLoginViewPresented) {
+            NavigationStack {
+                LoginView(isLoginViewPresented: $isLoginViewPresented)
+            }
         }
     }
 }

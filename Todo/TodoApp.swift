@@ -6,15 +6,15 @@
 //
 
 import SwiftUI
+import Firebase
 
 @main
 struct TodoApp: App {
-    let persistenceController = PersistenceController.shared
+    init() { FirebaseApp.configure() }
     
     var body: some Scene {
         WindowGroup {
             MainView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }

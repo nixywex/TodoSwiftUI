@@ -6,71 +6,38 @@
 //
 
 import SwiftUI
-import CoreData
 
 struct TodosListSectionView: View {
-    @Environment(\.managedObjectContext) var managedObjectContext
+    @StateObject var vm: TodosListSectionViewModel
     
-    private var todos: FetchRequest<TodoEntity>
-    private let isDoneSection: Bool
-    var folder: FolderEntity
-    
-    @State var isSectionExpanded = true
-    
-    init(isDoneSection: Bool, sortType: TodoEntity.SortType, searchTerm: String, folder: FolderEntity) {
-        self.isDoneSection = isDoneSection
-        self.isSectionExpanded = !isDoneSection
-        self.todos = FetchRequest(fetchRequest: TodoEntity.getFilteredFetchRequest(isDone: isDoneSection, sortType: sortType, searchTerm: searchTerm, folder: folder))
-        self.folder = folder
-    }
+    var todos: [Todo]
+    var foldersCallback: () async throws -> Void
+    var callback: () async throws -> Void
     
     var body: some View {
-        Section("\(isDoneSection ? "Completed" : "Current") todos", isExpanded: $isSectionExpanded) {
-            ForEach(todos.wrappedValue) { todo in
+        Section("\(vm.isDoneSection ? "Completed" : "Current") todos", isExpanded: $vm.isSectionExpanded) {
+            ForEach(todos, id: \.id) { todo in
                 NavigationLink(destination: {
-                    TodoDetailsView(todo: todo)
-                }, label: {
-                    TodoListItemView(todo: todo)
-                        .swipeActions {
-                            Button(action: {
-                                self.handleDelete(todo: todo)
-                            }, label: {
-                                Text("Delete")
-                            })
-                            .tint(.red)
-                            
-                            Button(action: {
-                                self.handleToggle(todo: todo)
-                            }, label: {
-                                Text(isDoneSection ? "Not done" : "Done")
-                            })
-                            .tint(.green)
-                        }
-                })
+                    TodoDetailsView(vm: TodoDetailsViewModel(todo: todo, callback: callback, foldersCallback: foldersCallback))
+                }) {
+                    TodoListItemView(todo: todo, callback: callback, foldersCallback: foldersCallback)
+                }
             }
         }
     }
 }
 
-private extension TodosListSectionView {
-    func handleDelete(todo: TodoEntity) {
-        do {
-            guard let existingTodo = PersistenceController.exisits(todo, in: self.managedObjectContext) else {fatalError()}
-            folder.subtract()
-            try PersistenceController.delete(existingTodo, in: self.managedObjectContext)
-        } catch {
-            print(error)
-        }
-    }
+final class TodosListSectionViewModel: ObservableObject {
+    @Published var isSectionExpanded: Bool
+    @Published var isDoneSection: Bool
     
-    func handleToggle(todo: TodoEntity) {
-        todo.isDone.toggle()
-        folder.handleActiveTodosCounter(todo: todo)
-        let _ = PersistenceController.saveChanges(context: self.managedObjectContext)
+    init(isDoneSection: Bool) {
+        self.isSectionExpanded = !isDoneSection
+        self.isDoneSection = isDoneSection
     }
 }
 
 #Preview {
-    TodosListSectionView(isDoneSection: Bool.random(), sortType: .deadline, searchTerm: "", folder: FolderEntity(context: PersistenceController.preview.container.viewContext))
-        .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    TodosListSectionView(vm: TodosListSectionViewModel(isDoneSection: .init(true)), todos: [PreviewExtentions.previewTodo],
+                         foldersCallback: PreviewExtentions.previewCallback, callback: PreviewExtentions.previewCallback)
 }

@@ -6,20 +6,11 @@
 //
 
 import SwiftUI
-import CoreData
 
 struct TodoDetailsView: View {
     @Environment(\.dismiss) var dismiss
-    @Environment(\.managedObjectContext) var managedObjectContext
     
-    @ObservedObject var todo: TodoEntity
     @StateObject var vm: TodoDetailsViewModel
-    @FetchRequest(fetchRequest: FolderEntity.getAllFetchRequest()) private var folders
-    
-    init(todo: TodoEntity) {
-        _todo = ObservedObject(initialValue: todo)
-        _vm = StateObject(wrappedValue: TodoDetailsViewModel(todo: todo, context: todo.managedObjectContext!))
-    }
     
     var body: some View {
         NavigationStack {
@@ -64,17 +55,9 @@ struct TodoDetailsView: View {
                     HStack {
                         Image(systemName: "exclamationmark.circle")
                         Picker("Priotity", selection: $vm.todoPriority) {
-                            Text("Low").tag(TodoEntity.Priority.low)
-                            Text("Middle").tag(TodoEntity.Priority.middle)
-                            Text("High").tag(TodoEntity.Priority.high)
-                        }
-                    }
-                    HStack {
-                        Image(systemName: "folder")
-                        Picker("Folder", selection: $vm.todoFolder) {
-                            ForEach(folders, id: \.id) { folder in
-                                Text(folder.name).tag(folder)
-                            }
+                            Text("Low").tag(Todo.Priority.low)
+                            Text("Middle").tag(Todo.Priority.middle)
+                            Text("High").tag(Todo.Priority.high)
                         }
                     }
                     TextField("Description", text: $vm.todoDescription, axis: .vertical)
@@ -83,16 +66,19 @@ struct TodoDetailsView: View {
                 
                 Section("Actions") {
                     Button(action: {
-                        vm.configAlert(.delete)
+                        Task {
+                            do {
+                                try await vm.handleDelete()
+                                dismiss()
+                            } catch { print("Error deleting todo: \(error.localizedDescription)") }
+                        }
                     }, label: {
                         Text("\(Image(systemName: "trash")) Delete todo")
                             .foregroundStyle(.red)
                     })
                     Button(action: {
-                        if !vm.handleSave() {
-                            vm.configAlert(.invalidData)
-                        } else {
-                            dismiss()
+                        Task {
+                            if await vm.handleSave() { dismiss() }
                         }
                     }, label: {
                         Text("\(Image(systemName: "tray.and.arrow.down")) Save")
@@ -100,24 +86,14 @@ struct TodoDetailsView: View {
                     })
                 }
             }
-            .navigationTitle(todo.text)
+            .navigationTitle(vm.todo.text)
             .navigationBarTitleDisplayMode(.inline)
-            .alert(vm.alertHeader, isPresented: $vm.isAlertShowed) {
-                Button(vm.alertType == .delete ? "Cancel" : "OK", role: .cancel) {}
-                if vm.alertType == .delete {
-                    Button("Delete", role: .destructive) {
-                        vm.handleDelete(todo: todo)
-                        dismiss()
-                    }
-                }
-            } message: {
-                Text(vm.alertText)
-            }
         }
     }
 }
 
 
 #Preview {
-    TodoDetailsView(todo: .getPreviewTodo())
+    TodoDetailsView(vm: TodoDetailsViewModel(todo: PreviewExtentions.previewTodo, callback: PreviewExtentions.previewCallback,
+                                             foldersCallback: PreviewExtentions.previewCallback))
 }
