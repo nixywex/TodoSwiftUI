@@ -33,37 +33,40 @@ struct FolderView: View {
                 }
             }
             .navigationTitle(vm.folder.name)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Section {
-                            Picker("Sort by", selection: $vm.sortType) {
-                                Text("Deadline").tag(Todo.SortType.deadline)
-                                Text("Todo text").tag(Todo.SortType.text)
-                                Text("Priority").tag(Todo.SortType.priority)
-                            }
-                            .onChange(of: vm.sortType) {
-                                Task { try await vm.fetchTodos() }
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease")
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("\(Image(systemName: "plus"))") {
-                        vm.isNewTodoSheetPresented.toggle()
-                    }
-                }
-            }
-            
+        }
+        .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+            vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+        } message: {
+            Text(vm.alert?.message ?? "")
         }
         .task {
-            do { try await vm.fetchTodos() }
-            catch { print("Error fetching todos: \(error.localizedDescription)") }
+            await vm.fetchTodos()
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Section {
+                        Picker("Sort by", selection: $vm.sortType) {
+                            Text("Deadline").tag(Todo.SortType.deadline)
+                            Text("Todo text").tag(Todo.SortType.text)
+                            Text("Priority").tag(Todo.SortType.priority)
+                        }
+                        .onChange(of: vm.sortType) {
+                            Task { await vm.fetchTodos() }
+                        }
+                    }
+                } label: {
+                    Image(systemName: "line.3.horizontal.decrease")
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("\(Image(systemName: "plus"))") {
+                    vm.isNewTodoSheetPresented.toggle()
+                }
+            }
         }
         .sheet(isPresented: $vm.isNewTodoSheetPresented) {
-            NewTodoView(vm: NewTodoViewModel(folder: vm.folder, callback: vm.fetchTodos, foldersCallback: foldersCallback))
+            NewTodoView(vm: NewTodoViewModel(folder: vm.folder), callback: vm.fetchTodos, foldersCallback: foldersCallback)
         }
     }
 }

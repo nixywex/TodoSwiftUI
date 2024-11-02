@@ -6,16 +6,23 @@
 //
 
 import Foundation
-import FirebaseAuth
 
 final class LoginViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
-    @Published var isPresented: Bool = false
+    @Published var isSingUpPresented: Bool = false
+    @Published var isAlertPresented = false
+    @Published var alert: TodoAlert?
     
-    func login() async throws {
-        guard AuthManager.validate(email: email, password: password) else { return }
-        
-        let _ = try await AuthManager.shared.signIn(email: email, password: password)
+    func login() async {
+        do {
+            try AuthManager.validate(email: email, password: password)
+            let _ = try await AuthManager.shared.signIn(email: email, password: password)
+        } catch {
+            DispatchQueue.main.async {
+                self.alert = TodoAlert(error: error)
+                self.isAlertPresented = true
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ import FirebaseFirestore
 
 struct Folder: Codable {
     let id: String
-    let name: String
+    var name: String
     let numberOfActiveTodos: Int
     let userId: String
     let isEditable: Bool
@@ -40,7 +40,9 @@ final class FolderManager {
     
     func createNewFolder(withId userId: String, name: String) throws {
         let newFolder = Folder(name: name, userId: userId)
-        try foldersCollection.document(newFolder.id).setData(from: newFolder, merge: false, encoder: CodableExtentions.getEncoder())
+        do {
+            try foldersCollection.document(newFolder.id).setData(from: newFolder, merge: false, encoder: CodableExtentions.getEncoder())
+        } catch { throw Errors.creatingNewFolder }
     }
     
     private func getFolder(withId folderId: String) -> DocumentReference {
@@ -82,5 +84,9 @@ final class FolderManager {
                 FolderManager.shared.deleteFolder(withId: folder.id)
             }
         }
+    }
+    
+    static func validate(name: String) throws {
+        guard !name.isEmpty else { throw Errors.folderName }
     }
 }

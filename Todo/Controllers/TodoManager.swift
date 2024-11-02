@@ -105,4 +105,22 @@ final class TodoManager {
             }
         }
     }
+    
+    static func validate(text: String, deadline: Date, startDate: Date? = nil) throws {
+        guard !text.isEmpty else { throw Errors.todoText }
+        
+        let compareResult = Calendar.current.compare(deadline, to: Date.yesterday, toGranularity: .day)
+        
+        if compareResult != .orderedDescending {
+            throw Errors.todoDeadline
+        }
+        
+        if startDate != nil {
+            let compareResult = Calendar.current.compare(deadline, to: startDate ?? .now, toGranularity: .day)
+            
+            if compareResult != .orderedDescending {
+                throw Errors.todoDeadline
+            }
+        }
+    }
 }

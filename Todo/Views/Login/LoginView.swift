@@ -9,7 +9,6 @@ import SwiftUI
 
 struct LoginView: View {
     @Binding var isLoginViewPresented: Bool
-    
     @StateObject var vm = LoginViewModel()
     
     var body: some View {
@@ -21,11 +20,9 @@ struct LoginView: View {
                     .autocapitalization(.none)
                 Button("Login") {
                     Task {
-                        do {
-                            try await vm.login()
-                            self.isLoginViewPresented.toggle()
-                        } catch {
-                            print("Error: \(error.localizedDescription)")
+                        await vm.login()
+                        if vm.alert == nil {
+                            isLoginViewPresented.toggle()
                         }
                     }
                 }
@@ -33,12 +30,17 @@ struct LoginView: View {
             
             Section("Don't have an account yet?") {
                 Button("Create an account") {
-                    vm.isPresented.toggle()
+                    vm.isSingUpPresented.toggle()
                 }
             }
         }
-        .sheet(isPresented: $vm.isPresented) {
+        .sheet(isPresented: $vm.isSingUpPresented) {
             SignUpView(isLoginViewPresented: $isLoginViewPresented)
+        }
+        .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+            vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+        } message: {
+            Text(vm.alert?.message ?? "")
         }
     }
 }

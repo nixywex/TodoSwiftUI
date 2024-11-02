@@ -12,7 +12,7 @@ struct SignUpView: View {
     @Binding var isLoginViewPresented: Bool
     
     @StateObject var vm = SignUpViewModel()
-
+    
     var body: some View {
         NavigationStack {
             List {
@@ -29,8 +29,12 @@ struct SignUpView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Create") {
-                        vm.signUp()
-                        isLoginViewPresented.toggle()
+                        Task {
+                            await vm.signUp()
+                            if vm.alert == nil {
+                                isLoginViewPresented.toggle()
+                            }
+                        }
                     }
                 }
                 ToolbarItem(placement: .topBarLeading) {
@@ -39,6 +43,11 @@ struct SignUpView: View {
                     }
                 }
             }
+        }
+        .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+            vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+        } message: {
+            Text(vm.alert?.message ?? "")
         }
     }
 }

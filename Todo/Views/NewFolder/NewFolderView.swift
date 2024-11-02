@@ -10,6 +10,7 @@ import SwiftUI
 struct NewFolderView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var vm = NewFodlerViewModel()
+    
     var callback: () async throws -> Void
     
     var body: some View {
@@ -23,8 +24,9 @@ struct NewFolderView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        if vm.handleSave() {
-                            Task {
+                        Task {
+                            await vm.handleSave()
+                            if vm.alert == nil {
                                 try await callback()
                                 dismiss()
                             }
@@ -43,11 +45,12 @@ struct NewFolderView: View {
             }
         }
         .task {
-            do {
-                try await vm.loadCurrentUser()
-            } catch {
-                print("Error loading a user: \(error.localizedDescription)")
-            }
+            await vm.loadCurrentUser()
+        }
+        .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+            vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+        } message: {
+            Text(vm.alert?.message ?? "")
         }
     }
 }

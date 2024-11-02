@@ -32,9 +32,13 @@ struct FoldersView: View {
                 }
             }
         }
+        .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+            vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+        } message: {
+            Text(vm.alert?.message ?? "")
+        }
         .task {
-            do { try await vm.fetchFolders() }
-            catch { print("Error fetching folders: \(error.localizedDescription)") }
+            await vm.fetchFolders()
         }
         .sheet(isPresented: $vm.isNewFolderSheetShowed, content: {
             NewFolderView(callback: vm.fetchFolders)
@@ -45,23 +49,40 @@ struct FoldersView: View {
 final class FoldersViewModel: ObservableObject {
     @Published var isNewFolderSheetShowed = false
     @Published var folders: [Folder]?
-
+    @Published var isAlertPresented: Bool = false
+    @Published var alert: TodoAlert?
+    
     var userId: String?
     
-    init() {
-        do { self.userId = try AuthManager.shared.getAuthUser().uid }
-        catch { print("Error fetching user id: \(error.localizedDescription)") }
+    func fetchFolders() async {
+        if userId == nil {
+            fetchUserId()
+        }
+        
+        guard let userId else {
+            let error = Errors.fetchAuthUser
+            alert = TodoAlert(error: error)
+            isAlertPresented = true
+            return
+        }
+        
+        do {
+            let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
+            
+            DispatchQueue.main.async {
+                self.folders = folders
+            }
+        } catch {
+            alert = TodoAlert(error: error)
+            isAlertPresented = true
+        }
     }
     
-    func fetchFolders() async throws {
-        if userId == nil { self.userId = try AuthManager.shared.getAuthUser().uid }
-        
-        guard let userId else { throw URLError(.badURL) }
-        
-        let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
-        
-        DispatchQueue.main.async {
-            self.folders = folders
+    func fetchUserId() {
+        do { self.userId = try AuthManager.shared.getAuthUser().uid }
+        catch {
+            alert = TodoAlert(error: error)
+            isAlertPresented = true
         }
     }
 }

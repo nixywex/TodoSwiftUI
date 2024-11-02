@@ -15,12 +15,12 @@ final class TodoDetailsViewModel: ObservableObject {
     @Published var isStartDateOn: Bool
     @Published var todoDescription: String
     @Published var todoPriority: Todo.Priority
+    @Published var isAlertPresented: Bool = false
+    @Published var alert: TodoAlert?
     
     var todo: Todo
-    var callback: () async throws -> Void
-    var foldersCallback: () async throws -> Void
     
-    init(todo: Todo, callback: @escaping () async throws -> Void, foldersCallback: @escaping () async throws -> Void) {
+    init(todo: Todo) {
         self.todo = todo
         self.todoText = todo.text
         self.todoDeadline = todo.deadline
@@ -29,12 +29,18 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todoDescription = todo.description
         self.isStartDateOn = todo.startDate != nil
         self.todoPriority = Todo.Priority(rawValue: todo.priority) ?? .middle
-        self.callback = callback
-        self.foldersCallback = foldersCallback
     }
     
-    func handleSave() async -> Bool {
+    func handleSave() {
+        do {
+            try TodoManager.validate(text: todoText, deadline: todoDeadline, startDate: todoStartDate)
+        } catch {
+            self.alert = TodoAlert(error: error)
+            self.isAlertPresented = true
+        }
+        
         let isDone = todo.isDone
+        
         var values: [String: Any] = [
             "text": self.todoText,
             "deadline": self.todoDeadline,
@@ -49,26 +55,22 @@ final class TodoDetailsViewModel: ObservableObject {
         
         TodoManager.shared.updateTodo(withId: todo.id, values: values)
         
-        do {
-            if isDone != self.isTodoDone { FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: isDone ? 1 : -1) }
-            try await callback()
-            try await foldersCallback()
-        } catch {
-            print("Error saving todo: \(error.localizedDescription)")
-            return false
-        }
+        if isDone != self.isTodoDone { FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: isDone ? 1 : -1) }
         
-        return true
     }
     
-    func handleDelete() async throws {
+    func handleDelete() {
+        self.alert = TodoAlert(title: "Do you really want to delete this todo?", type: .delete, message: "You can't undo this action")
+        self.isAlertPresented = true
+    }
+    
+    func deleteTodo() {
         TodoManager.shared.deleteTodo(withId: self.todo.id)
         FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: -1)
-        try await callback()
-        try await foldersCallback()
     }
     
     func handleToggle() {
         self.todoStartDate = self.isStartDateOn ? Date() : nil
     }
 }
+

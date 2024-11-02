@@ -12,6 +12,9 @@ struct TodoDetailsView: View {
     
     @StateObject var vm: TodoDetailsViewModel
     
+    var callback: () async throws -> Void
+    var foldersCallback: () async throws -> Void
+    
     var body: some View {
         NavigationStack {
             List {
@@ -67,10 +70,7 @@ struct TodoDetailsView: View {
                 Section("Actions") {
                     Button(action: {
                         Task {
-                            do {
-                                try await vm.handleDelete()
-                                dismiss()
-                            } catch { print("Error deleting todo: \(error.localizedDescription)") }
+                            vm.handleDelete()
                         }
                     }, label: {
                         Text("\(Image(systemName: "trash")) Delete todo")
@@ -78,7 +78,12 @@ struct TodoDetailsView: View {
                     })
                     Button(action: {
                         Task {
-                            if await vm.handleSave() { dismiss() }
+                            vm.handleSave()
+                            if vm.alert == nil {
+                                try await callback()
+                                try await foldersCallback()
+                                dismiss()
+                            }
                         }
                     }, label: {
                         Text("\(Image(systemName: "tray.and.arrow.down")) Save")
@@ -88,12 +93,27 @@ struct TodoDetailsView: View {
             }
             .navigationTitle(vm.todo.text)
             .navigationBarTitleDisplayMode(.inline)
+            .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+                vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+                if vm.alert?.type == .delete {
+                    vm.alert?.getDeleteButton(delete: {
+                        Task {
+                            vm.deleteTodo()
+                            vm.alert = nil
+                            try await callback()
+                            try await foldersCallback()
+                            dismiss()
+                        }
+                    })
+                }
+            } message: {
+                Text(vm.alert?.message ?? "")
+            }
         }
     }
 }
 
 
 #Preview {
-    TodoDetailsView(vm: TodoDetailsViewModel(todo: PreviewExtentions.previewTodo, callback: PreviewExtentions.previewCallback,
-                                             foldersCallback: PreviewExtentions.previewCallback))
+    TodoDetailsView(vm: TodoDetailsViewModel(todo: PreviewExtentions.previewTodo), callback: PreviewExtentions.previewCallback, foldersCallback: PreviewExtentions.previewCallback)
 }

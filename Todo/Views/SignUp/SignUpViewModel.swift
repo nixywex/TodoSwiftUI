@@ -12,16 +12,20 @@ final class SignUpViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
     @Published var confirmPassword: String = ""
+    @Published var isAlertPresented = false
+    @Published var alert: TodoAlert?
     
-    func signUp() {
-        guard AuthManager.validate(email: email, password: password, confirmPassword: confirmPassword) else { return }
-        
-        Task {
-            do {
-                let authResult = try await AuthManager.shared.createUser(withEmail: email, password: password)
-                let user = DbUser(auth: authResult, name: name)
-                try UserManager.shared.createNewUserInDb(user: user)
-            } catch { print("Error: \(error.localizedDescription)") }
+    func signUp() async {
+        do {
+            try AuthManager.validate(email: email, password: password, confirmPassword: confirmPassword, name: name)
+            let authResult = try await AuthManager.shared.createUser(withEmail: email, password: password)
+            let user = DbUser(auth: authResult, name: name)
+            try UserManager.shared.createNewUserInDb(user: user)
+        } catch {
+            DispatchQueue.main.async {
+                self.alert = TodoAlert(error: error)
+                self.isAlertPresented = true
+            }
         }
     }
 }

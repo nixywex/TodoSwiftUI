@@ -26,23 +26,17 @@ struct ProfileView: View {
                     }
                     
                     Button("Sign out") {
-                        Task {
-                            do {
-                                try vm.signOut()
-                                self.isLoginViewPresented.toggle()
-                            } catch { print("Error signing out: \(error.localizedDescription)") }
-                        }
+                        vm.signOut()
+                        self.isLoginViewPresented.toggle()
                     }
                 }
                 
                 Section {
                     Button("Delete your account") {
                         Task {
-                            do {
-                                try await vm.deleteAccount()
-                                self.isLoginViewPresented.toggle()
-                            } catch { print("Error deleteing account: \(error.localizedDescription)") }
+                            vm.handleDelete()
                         }
+                        
                     }
                     .tint(.red)
                 }
@@ -50,11 +44,21 @@ struct ProfileView: View {
             .navigationTitle("Profile")
         }
         .task {
-            do {
-                try await vm.loadCurrentUser()
-            } catch {
-                print("Error fetching profile: \(error.localizedDescription)")
+            await vm.loadCurrentUser()
+        }
+        .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+            vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+            if vm.alert?.type == .delete {
+                vm.alert?.getDeleteButton(delete: {
+                    Task {
+                        await vm.deleteAccount()
+                        vm.alert = nil
+                        isLoginViewPresented = true
+                    }
+                })
             }
+        } message: {
+            Text(vm.alert?.message ?? "")
         }
     }
 }

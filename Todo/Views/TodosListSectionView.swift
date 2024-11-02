@@ -18,7 +18,7 @@ struct TodosListSectionView: View {
         Section("\(vm.isDoneSection ? "Completed" : "Current") todos", isExpanded: $vm.isSectionExpanded) {
             ForEach(todos, id: \.id) { todo in
                 NavigationLink(destination: {
-                    TodoDetailsView(vm: TodoDetailsViewModel(todo: todo, callback: callback, foldersCallback: foldersCallback))
+                    TodoDetailsView(vm: TodoDetailsViewModel(todo: todo), callback: callback, foldersCallback: foldersCallback)
                 }) {
                     TodoListItemView(todo: todo, callback: callback, foldersCallback: foldersCallback)
                 }

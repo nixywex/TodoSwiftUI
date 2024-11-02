@@ -4,56 +4,59 @@
 //
 //  Created by Nikita Sheludko on 29.08.24.
 //
-//
-//  THIS FUNCTIONALITY IS TEMPORARILY NOT USED
-//
-//import SwiftUI
-//
-//struct FolderDetailsView: View {
-//    @ObservedObject var vm: FolderDetailsViewModel
-//    @Environment(\.dismiss) var dismiss
-//    
-//    var body: some View {
-//        NavigationStack {
-//            List {
-//                Section("Edit your folder") {
-//                    TextField("Enter folder name", text: $vm.folderName)
-//                }
-//                
-//                Section("Actions") {
-//                    Button(action: {
-//                        vm.configAlert(alertType: .delete)
-//                    }, label: {
-//                        Text("\(Image(systemName: "trash")) Delete folder")
-//                            .foregroundStyle(.red)
-//                    })
-//                    Button(action: {
-//                        if vm.handleSave() {
-//                            dismiss()
-//                        }
-//                    }, label: {
-//                        Text("\(Image(systemName: "tray.and.arrow.down")) Save")
-//                            .bold()
-//                    })
-//                }
-//            }
-//            .navigationTitle(vm.folder.name)
-//            .navigationBarTitleDisplayMode(.inline)
-//            .alert(vm.alertTitle, isPresented: $vm.isAlertShowed) {
-//                Button(vm.alertType == .delete ? "Cancel" : "OK", role: .cancel) {}
-//                if vm.alertType == .delete {
-//                    Button("Delete", role: .destructive) {
-//                        vm.deleteFolder()
-//                        dismiss()
-//                    }
-//                }
-//            } message: {
-//                Text(vm.alertText)
-//            }
-//        }
-//    }
-//}
-//
-//#Preview {
-//    FolderDetailsView(vm: FolderDetailsViewModel(folder: FolderEntity.getPreviewFolder(context: PersistenceController.preview.container.viewContext), context: PersistenceController.preview.container.viewContext))
-//}
+
+import SwiftUI
+
+struct FolderDetailsView: View {
+    @Environment(\.dismiss) var dismiss
+    @StateObject var vm: FolderDetailsViewModel
+    
+    var foldersCallback: () async throws -> Void
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Edit your folder") {
+                    TextField("Enter folder name", text: $vm.folder.name)
+                }
+                
+                Section("Actions") {
+                    Button("\(Image(systemName: "trash")) Delete folder") {
+                        vm.handleDelete()
+                    }
+                    .tint(.red)
+                    Button("\(Image(systemName: "tray.and.arrow.down")) Save") {
+                        vm.handleSave()
+                        Task {
+                            if vm.alert == nil {
+                                try await foldersCallback()
+                                dismiss()
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle(vm.folder.name)
+            .navigationBarTitleDisplayMode(.inline)
+        }
+        .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+            vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+            if vm.alert?.type == .delete {
+                vm.alert?.getDeleteButton(delete: {
+                    Task {
+                        vm.deleteFolder()
+                        try await foldersCallback()
+                        vm.alert = nil
+                        dismiss()
+                    }
+                })
+            }
+        } message: {
+            Text(vm.alert?.message ?? "")
+        }
+    }
+}
+
+#Preview {
+    FolderDetailsView(vm: FolderDetailsViewModel(folder: PreviewExtentions.previewFolder), foldersCallback: PreviewExtentions.previewCallback)
+}

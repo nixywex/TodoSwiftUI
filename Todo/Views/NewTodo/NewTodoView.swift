@@ -12,6 +12,9 @@ struct NewTodoView: View {
     
     @StateObject var vm: NewTodoViewModel
     
+    var callback: () async throws -> Void
+    var foldersCallback: () async throws -> Void
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -69,7 +72,12 @@ struct NewTodoView: View {
                     ToolbarItem (placement: .topBarTrailing) {
                         Button(action: {
                             Task {
-                                if await vm.handleSaveButton() { dismiss() }
+                                await vm.handleSaveButton()
+                                if vm.alert == nil {
+                                    try await callback()
+                                    try await foldersCallback()
+                                    dismiss()
+                                }
                             }
                         }, label: {
                             Text("Add todo").bold()
@@ -81,10 +89,14 @@ struct NewTodoView: View {
                 }
             }
         }
+        .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+            vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+        } message: {
+            Text(vm.alert?.message ?? "")
+        }
     }
 }
 
 #Preview {
-    NewTodoView(vm: NewTodoViewModel(folder: PreviewExtentions.previewFolder, callback: PreviewExtentions.previewCallback,
-                                     foldersCallback: PreviewExtentions.previewCallback))
+    NewTodoView(vm: NewTodoViewModel(folder: PreviewExtentions.previewFolder), callback: PreviewExtentions.previewCallback, foldersCallback: PreviewExtentions.previewCallback)
 }

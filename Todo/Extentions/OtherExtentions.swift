@@ -9,6 +9,16 @@ import Foundation
 import FirebaseFirestore
 
 extension Date {
+    static var yesterday: Date { return Date().dayBefore }
+    
+    var dayBefore: Date {
+        return Calendar.current.date(byAdding: .day, value: -1, to: noon)!
+    }
+    
+    var noon: Date {
+        return Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: self)!
+    }
+    
     func prettyDate() -> String {
         self.formatted(.dateTime.day().month())
     }
@@ -18,7 +28,7 @@ extension Date {
     }
 }
 
-extension Query  {
+extension Query {
     func getDocuments<T>(as type: T.Type) async throws -> [T] where T: Decodable {
         let snapshot = try await self.getDocuments()
         
