@@ -15,8 +15,8 @@ struct FoldersView: View {
             VStack {
                 if let folders = vm.folders, folders.isEmpty {
                     Text("You don't have any folders yet. Create one to get started!")
-                } else if let folders = vm.folders {
-                    FoldersListView(folders: folders, foldersCallback: vm.fetchFolders)
+                } else if let folders = vm.folders, let inbox = vm.inbox {
+                    FoldersListView(folders: folders, inbox: inbox, foldersCallback: vm.fetchFolders)
                 } else {
                     Text("Loading")
                 }
@@ -49,6 +49,7 @@ struct FoldersView: View {
 final class FoldersViewModel: ObservableObject {
     @Published var isNewFolderSheetShowed = false
     @Published var folders: [Folder]?
+    @Published var inbox: Folder?
     @Published var isAlertPresented: Bool = false
     @Published var alert: TodoAlert?
     
@@ -70,7 +71,8 @@ final class FoldersViewModel: ObservableObject {
             let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
             
             DispatchQueue.main.async {
-                self.folders = folders
+                self.inbox = folders.first { $0.name == "Inbox" }
+                self.folders = folders.filter { $0.isEditable != false }
             }
         } catch {
             alert = TodoAlert(error: error)

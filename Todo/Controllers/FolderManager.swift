@@ -38,8 +38,8 @@ final class FolderManager {
     
     private let foldersCollection = Firestore.firestore().collection("folders")
     
-    func createNewFolder(withId userId: String, name: String) throws {
-        let newFolder = Folder(name: name, userId: userId)
+    func createNewFolder(withUserId userId: String, name: String, isEditable: Bool = true) throws {
+        let newFolder = Folder(name: name, userId: userId, isEditable: isEditable)
         do {
             try foldersCollection.document(newFolder.id).setData(from: newFolder, merge: false, encoder: CodableExtentions.getEncoder())
         } catch { throw Errors.creatingNewFolder }
@@ -87,6 +87,8 @@ final class FolderManager {
     }
     
     static func validate(name: String) throws {
+        let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else { throw Errors.folderName }
+        guard name.lowercased() != "inbox" else { throw Errors.folderNameInbox }
     }
 }

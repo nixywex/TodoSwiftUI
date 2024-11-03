@@ -32,7 +32,7 @@ final class NewFodlerViewModel: ObservableObject {
         
         do {
             try FolderManager.validate(name: name)
-            try FolderManager.shared.createNewFolder(withId: user!.userId, name: self.name)
+            try FolderManager.shared.createNewFolder(withUserId: user!.userId, name: self.name)
         }
         catch {
             DispatchQueue.main.async {

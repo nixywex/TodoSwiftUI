@@ -11,6 +11,7 @@ final class FolderViewModel: ObservableObject {
     @Published var isNewTodoSheetPresented = false
     @Published var todosNotDone: [Todo]?
     @Published var todosDone: [Todo]?
+    @Published var folders: [Folder]?
     @Published var sortType: Todo.SortType = .deadline
     @Published var folder: Folder
     @Published var isAlertPresented: Bool = false

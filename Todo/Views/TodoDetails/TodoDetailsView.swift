@@ -12,8 +12,9 @@ struct TodoDetailsView: View {
     
     @StateObject var vm: TodoDetailsViewModel
     
+    var folders: [Folder]
     var callback: () async throws -> Void
-    var foldersCallback: () async throws -> Void
+    var foldersCallback: (() async throws -> Void)?
     
     var body: some View {
         NavigationStack {
@@ -48,7 +49,7 @@ struct TodoDetailsView: View {
                         DatePicker(
                             "Do due",
                             selection: $vm.todoDeadline,
-                            in: Date()...,
+                            in: vm.todoDeadline < Date() ? vm.todoDeadline... : Date()...,
                             displayedComponents: [.date]
                         )
                     }
@@ -61,6 +62,14 @@ struct TodoDetailsView: View {
                             Text("Low").tag(Todo.Priority.low)
                             Text("Middle").tag(Todo.Priority.middle)
                             Text("High").tag(Todo.Priority.high)
+                        }
+                    }
+                    HStack {
+                        Image(systemName: "folder")
+                        Picker("Folder", selection: $vm.todoFolderId) {
+                            ForEach(folders, id: \.id) { folder in
+                                Text(folder.name).tag(folder.id)
+                            }
                         }
                     }
                     TextField("Description", text: $vm.todoDescription, axis: .vertical)
@@ -81,7 +90,7 @@ struct TodoDetailsView: View {
                             vm.handleSave()
                             if vm.alert == nil {
                                 try await callback()
-                                try await foldersCallback()
+                                try await foldersCallback?()
                                 dismiss()
                             }
                         }
@@ -101,7 +110,7 @@ struct TodoDetailsView: View {
                             vm.deleteTodo()
                             vm.alert = nil
                             try await callback()
-                            try await foldersCallback()
+                            try await foldersCallback?()
                             dismiss()
                         }
                     })
@@ -115,5 +124,6 @@ struct TodoDetailsView: View {
 
 
 #Preview {
-    TodoDetailsView(vm: TodoDetailsViewModel(todo: PreviewExtentions.previewTodo), callback: PreviewExtentions.previewCallback, foldersCallback: PreviewExtentions.previewCallback)
+    TodoDetailsView(vm: TodoDetailsViewModel(todo: PreviewExtentions.previewTodo), folders: [PreviewExtentions.previewFolder],
+                    callback: PreviewExtentions.previewCallback, foldersCallback: PreviewExtentions.previewCallback)
 }

@@ -25,9 +25,9 @@ struct DbUser: Codable {
 final class UserManager {
     static let shared = UserManager()
     let userCollection = Firestore.firestore().collection("users")
-
+    
     private init() {}
-        
+    
     private func getUserReference(withId userId: String) -> DocumentReference  {
         return userCollection.document(userId)
     }
@@ -38,6 +38,7 @@ final class UserManager {
     
     func createNewUserInDb(user: DbUser) throws {
         try getUserReference(withId: user.userId).setData(from: user, merge: false, encoder: CodableExtentions.getEncoder())
+        try FolderManager.shared.createNewFolder(withUserId: user.userId, name: "Inbox", isEditable: false)
     }
     
     func fetchCurrentUser() async throws -> DbUser {

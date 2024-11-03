@@ -11,68 +11,53 @@ struct FoldersListView: View {
     @StateObject var vm = FoldersListViewModel()
     
     var folders: [Folder]
+    var inbox: Folder
     var foldersCallback: () async throws -> Void
     
     var body: some View {
         List {
-            ForEach(folders, id: \.id) { folder in
-                NavigationLink(destination: FolderView(vm: FolderViewModel(folder: folder), foldersCallback: foldersCallback)) {
-                    FolderListItemView(folder: folder)
+            Section {
+                NavigationLink(destination: FolderView(vm: FolderViewModel(folder: inbox), folders: folders + [inbox], foldersCallback: foldersCallback)) {
+                    FolderListItemView(folder: inbox)
                 }
-                .swipeActions() {
-                    Button("Delete") {
-                        vm.handleDelete()
+            }
+            Section {
+                ForEach(folders, id: \.id) { folder in
+                    NavigationLink(destination: FolderView(vm: FolderViewModel(folder: folder), folders: folders, foldersCallback: foldersCallback)) {
+                        FolderListItemView(folder: folder)
                     }
-                    .tint(.red)
-                    NavigationLink(destination: {
-                        FolderDetailsView(vm: FolderDetailsViewModel(folder: folder), foldersCallback: foldersCallback)
-                    }) {
-                        Button("Edit"){
-                            
+                    .swipeActions() {
+                        Button("Delete") { vm.handleDelete() }
+                        .tint(.red)
+                        
+                        NavigationLink(destination: { FolderDetailsView(vm: FolderDetailsViewModel(folder: folder), foldersCallback: foldersCallback)}) {
+                            Button("Edit"){}
                         }
                         .tint(.blue)
                     }
-                }
-                .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
-                    vm.alert?.getCancelButton(cancel: { vm.alert = nil })
-                    if vm.alert?.type == .delete {
-                        vm.alert?.getDeleteButton(delete: {
-                            Task {
-                                vm.deleteFolder(folderId: folder.id)
-                                vm.alert = nil
-                                try await foldersCallback()
-                            }
-                        })
+                    .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+                        vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+                        if vm.alert?.type == .delete {
+                            vm.alert?.getDeleteButton(delete: {
+                                Task {
+                                    vm.deleteFolder(folderId: folder.id)
+                                    vm.alert = nil
+                                    try await foldersCallback()
+                                }
+                            })
+                        }
+                    } message: {
+                        Text(vm.alert?.message ?? "")
                     }
-                } message: {
-                    Text(vm.alert?.message ?? "")
                 }
             }
-        }
-        .task {
-            await vm.fetchFolders()
         }
     }
 }
 
 final class FoldersListViewModel: ObservableObject {
-    @Published var folders: [Folder]? = nil
     @Published var isAlertPresented: Bool = false
     @Published var alert: TodoAlert?
-    
-    func fetchFolders() async {
-        do {
-            let userId = try await UserManager.shared.fetchCurrentUser().userId
-            let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
-            
-            DispatchQueue.main.async { self.folders = folders }
-        } catch {
-            DispatchQueue.main.async {
-                self.alert = TodoAlert(error: error)
-                self.isAlertPresented = true
-            }
-        }
-    }
     
     func handleDelete() {
         self.alert = TodoAlert(title: "Delete Folder", type: .delete, message: "Are you sure you want to delete this folder?")
@@ -86,5 +71,5 @@ final class FoldersListViewModel: ObservableObject {
 }
 
 #Preview {
-    FoldersListView(folders: [PreviewExtentions.previewFolder], foldersCallback: PreviewExtentions.previewCallback)
+    FoldersListView(folders: [PreviewExtentions.previewFolder], inbox: PreviewExtentions.previewFolder, foldersCallback: PreviewExtentions.previewCallback)
 }

@@ -17,6 +17,15 @@ struct Todo: Codable {
     let text: String
     let startDate: Date?
     let folderId: String
+    let createdAt: Date
+    
+    var smartPriority: Double {
+        let difference = self.deadline.timeIntervalSinceNow
+        let coefficient = Double(self.priority) + 2
+        
+        if difference >= 0 { return difference / coefficient }
+        else { return difference * coefficient }
+    }
     
     init(deadline: Date, text: String, folderId: String, priority: Int = 0, description: String = "", startDate: Date? = nil) {
         self.deadline = deadline
@@ -27,6 +36,7 @@ struct Todo: Codable {
         self.id = UUID().uuidString
         self.isDone = false
         self.folderId = folderId
+        self.createdAt = Date()
     }
     
     enum Priority: Int {
@@ -41,6 +51,8 @@ struct Todo: Codable {
         case priority = "priority"
         case text = "text"
         case isDone = "is_done"
+        case description = "description"
+        case startDate = "start_date"
     }
     
     enum SortType: String, Codable {
@@ -73,13 +85,25 @@ final class TodoManager {
     func deleteTodo(withId todoId: String) {
         getTodo(withId: todoId).delete()
     }
-
+    
     func getAllTodosInFolder(withId folderId: String) async throws -> [Todo] {
         try await todosCollection.whereField(Todo.Keys.folderId.rawValue, isEqualTo: folderId).getDocuments(as: Todo.self)
     }
     
     func getAllTodosSortedByDate(descending: Bool) async throws -> [Todo] {
         try await todosCollection.order(by: Todo.Keys.deadline.rawValue, descending: descending).getDocuments(as: Todo.self)
+    }
+    
+    func getAllTodosFromUser(withId userId: String) async throws -> [Todo] {
+        let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
+        var allTodos = [Todo]()
+        
+        for folder in folders {
+            let folderTodos = try await getAllTodosInFolderSorted(by: .priority, descending: true, folderId: folder.id, isDone: false)
+            allTodos.append(contentsOf: folderTodos)
+        }
+        
+        return allTodos
     }
     
     func getAllTodosInFolderSorted(by sortType: Todo.SortType, descending: Bool, folderId: String, isDone: Bool) async throws -> [Todo] {
@@ -106,21 +130,15 @@ final class TodoManager {
         }
     }
     
-    static func validate(text: String, deadline: Date, startDate: Date? = nil) throws {
+    static func validate(text: String, deadline: Date, startDate: Date? = nil, createdAt: Date) throws {
         guard !text.isEmpty else { throw Errors.todoText }
         
-        let compareResult = Calendar.current.compare(deadline, to: Date.yesterday, toGranularity: .day)
-        
-        if compareResult != .orderedDescending {
-            throw Errors.todoDeadline
-        }
+        let compareToCreateDate = Calendar.current.compare(deadline, to: createdAt, toGranularity: .day)
+        if compareToCreateDate == .orderedAscending { throw Errors.todoDeadline }
         
         if startDate != nil {
             let compareResult = Calendar.current.compare(deadline, to: startDate ?? .now, toGranularity: .day)
-            
-            if compareResult != .orderedDescending {
-                throw Errors.todoDeadline
-            }
+            if compareResult != .orderedDescending { throw Errors.todoDeadline }
         }
     }
 }

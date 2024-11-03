@@ -10,6 +10,7 @@ import SwiftUI
 struct FolderView: View {
     @StateObject var vm: FolderViewModel
     
+    var folders: [Folder]
     var foldersCallback: () async throws -> Void
     
     var body: some View {
@@ -20,10 +21,10 @@ struct FolderView: View {
                         Text("You have no todos. Well done!")
                     } else {
                         List {
-                            TodosListSectionView(vm: TodosListSectionViewModel(isDoneSection: false), todos: todosNotDone, foldersCallback: foldersCallback,
-                                                 callback: vm.fetchTodos)
-                            TodosListSectionView(vm: TodosListSectionViewModel(isDoneSection: true), todos: todosDone, foldersCallback: foldersCallback,
-                                                 callback: vm.fetchTodos)
+                            TodosListSectionView(vm: TodosListSectionViewModel(isDoneSection: false), todos: todosNotDone, folders: folders,
+                                                 foldersCallback: foldersCallback, callback: vm.fetchTodos)
+                            TodosListSectionView(vm: TodosListSectionViewModel(isDoneSection: true), todos: todosDone, folders: folders,
+                                                 foldersCallback: foldersCallback, callback: vm.fetchTodos)
                         }
                         .listStyle(SidebarListStyle())
                     }
@@ -34,13 +35,13 @@ struct FolderView: View {
             }
             .navigationTitle(vm.folder.name)
         }
+        .task {
+            await vm.fetchTodos()
+        }
         .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
             vm.alert?.getCancelButton(cancel: { vm.alert = nil })
         } message: {
             Text(vm.alert?.message ?? "")
-        }
-        .task {
-            await vm.fetchTodos()
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -73,5 +74,6 @@ struct FolderView: View {
 
 
 #Preview {
-    FolderView(vm: FolderViewModel(folder: PreviewExtentions.previewFolder), foldersCallback: PreviewExtentions.previewCallback)
+    FolderView(vm: FolderViewModel(folder: PreviewExtentions.previewFolder), folders: [PreviewExtentions.previewFolder],
+               foldersCallback: PreviewExtentions.previewCallback)
 }

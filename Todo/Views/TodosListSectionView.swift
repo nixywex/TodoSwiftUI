@@ -11,6 +11,7 @@ struct TodosListSectionView: View {
     @StateObject var vm: TodosListSectionViewModel
     
     var todos: [Todo]
+    var folders: [Folder]
     var foldersCallback: () async throws -> Void
     var callback: () async throws -> Void
     
@@ -18,7 +19,7 @@ struct TodosListSectionView: View {
         Section("\(vm.isDoneSection ? "Completed" : "Current") todos", isExpanded: $vm.isSectionExpanded) {
             ForEach(todos, id: \.id) { todo in
                 NavigationLink(destination: {
-                    TodoDetailsView(vm: TodoDetailsViewModel(todo: todo), callback: callback, foldersCallback: foldersCallback)
+                    TodoDetailsView(vm: TodoDetailsViewModel(todo: todo), folders: folders, callback: callback, foldersCallback: foldersCallback)
                 }) {
                     TodoListItemView(todo: todo, callback: callback, foldersCallback: foldersCallback)
                 }
@@ -38,6 +39,7 @@ final class TodosListSectionViewModel: ObservableObject {
 }
 
 #Preview {
-    TodosListSectionView(vm: TodosListSectionViewModel(isDoneSection: .init(true)), todos: [PreviewExtentions.previewTodo],
+    TodosListSectionView(vm: TodosListSectionViewModel(isDoneSection: .init(true)),
+                         todos: [PreviewExtentions.previewTodo], folders: [PreviewExtentions.previewFolder],
                          foldersCallback: PreviewExtentions.previewCallback, callback: PreviewExtentions.previewCallback)
 }

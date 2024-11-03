@@ -25,7 +25,7 @@ final class NewTodoViewModel: ObservableObject {
     
     func handleSaveButton() async {
         do {
-            try TodoManager.validate(text: text, deadline: deadline, startDate: startDate)
+            try TodoManager.validate(text: text, deadline: deadline, startDate: startDate, createdAt: Date())
             try TodoManager.shared.createNewTodo(folderId: folder.id, deadline: deadline, text: text,
                                                  priority: priority.rawValue, description: description, startDate: startDate)
             FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: folder.id, to: 1)

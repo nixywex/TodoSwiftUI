@@ -28,6 +28,7 @@ enum Errors: Error, LocalizedError {
     case todoText
     case todoDeadline
     case folderName
+    case folderNameInbox
     
     var errorDescription: String? {
         switch self {
@@ -67,6 +68,8 @@ enum Errors: Error, LocalizedError {
             return "The deadline cannot be in the past or earlier than the start date"
         case .folderName:
             return "Please add a name for this folder"
+        case .folderNameInbox:
+            return "'Inbox' is a reserved folder name. Please choose another name"
         }
     }
 }

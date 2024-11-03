@@ -15,6 +15,7 @@ final class TodoDetailsViewModel: ObservableObject {
     @Published var isStartDateOn: Bool
     @Published var todoDescription: String
     @Published var todoPriority: Todo.Priority
+    @Published var todoFolderId: String
     @Published var isAlertPresented: Bool = false
     @Published var alert: TodoAlert?
     
@@ -29,34 +30,37 @@ final class TodoDetailsViewModel: ObservableObject {
         self.todoDescription = todo.description
         self.isStartDateOn = todo.startDate != nil
         self.todoPriority = Todo.Priority(rawValue: todo.priority) ?? .middle
+        self.todoFolderId = todo.folderId
     }
     
     func handleSave() {
         do {
-            try TodoManager.validate(text: todoText, deadline: todoDeadline, startDate: todoStartDate)
+            try TodoManager.validate(text: todoText, deadline: todoDeadline, startDate: todoStartDate, createdAt: todo.createdAt)
         } catch {
             self.alert = TodoAlert(error: error)
             self.isAlertPresented = true
         }
         
-        let isDone = todo.isDone
-        
-        var values: [String: Any] = [
-            "text": self.todoText,
-            "deadline": self.todoDeadline,
-            "is_done": self.isTodoDone,
-            "description": self.todoDescription,
-            "priority": self.todoPriority.rawValue
+        let values: [String: Any] = [
+            Todo.Keys.text.rawValue: self.todoText,
+            Todo.Keys.deadline.rawValue: self.todoDeadline,
+            Todo.Keys.isDone.rawValue: self.isTodoDone,
+            Todo.Keys.description.rawValue: self.todoDescription,
+            Todo.Keys.priority.rawValue: self.todoPriority.rawValue,
+            Todo.Keys.startDate.rawValue: self.todoStartDate,
+            Todo.Keys.folderId.rawValue: self.todoFolderId
         ]
-        
-        if let startDate = self.todoStartDate {
-            values["start_date"] = startDate
-        }
         
         TodoManager.shared.updateTodo(withId: todo.id, values: values)
         
-        if isDone != self.isTodoDone { FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: isDone ? 1 : -1) }
+        if todo.isDone != self.isTodoDone {
+            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: todo.isDone ? 1 : -1)
+        }
         
+        if todo.folderId != self.todoFolderId {
+            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: -1)
+            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todoFolderId, to: 1)
+        }
     }
     
     func handleDelete() {
@@ -66,7 +70,9 @@ final class TodoDetailsViewModel: ObservableObject {
     
     func deleteTodo() {
         TodoManager.shared.deleteTodo(withId: self.todo.id)
-        FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: -1)
+        if !todo.isDone {
+            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: -1)
+        }
     }
     
     func handleToggle() {

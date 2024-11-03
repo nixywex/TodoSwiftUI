@@ -13,7 +13,8 @@ struct TodoListItemView: View {
     
     var todo: Todo
     var callback: () async throws -> Void
-    var foldersCallback: () async throws -> Void
+    var foldersCallback: (() async throws -> Void)? = nil
+    var folderName: String?
     
     var body: some View {
         HStack {
@@ -21,7 +22,7 @@ struct TodoListItemView: View {
                 Task {
                     await vm.checkAsDone(todo: self.todo)
                     try await callback()
-                    try await foldersCallback()
+                    try await foldersCallback?()
                 }
             }, label: {
                 Image(systemName: self.todo.isDone ? "circle.inset.filled" : "circle")
@@ -35,8 +36,8 @@ struct TodoListItemView: View {
                 Text(self.todo.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(todo.isDone ? .gray : colorScheme == .dark ? .white : .black)
-                Text(todo.startDate == nil ? todo.deadline.prettyDate() :
-                        "\(todo.startDate?.prettyDate() ?? "") - \(todo.deadline.prettyDate())")
+                Text((todo.startDate == nil ? todo.deadline.prettyDate() :
+                        "\(todo.startDate?.prettyDate() ?? "") - \(todo.deadline.prettyDate())") + "\(folderName == nil ? "" : " • " + (folderName ?? ""))")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .fontWeight(.light)
                 .foregroundStyle(todo.isDone ? .secondary : vm.getDeadlineColor(deadline: todo.deadline))
@@ -56,7 +57,7 @@ struct TodoListItemView: View {
                 Task {
                     await vm.checkAsDone(todo: todo)
                     try await callback()
-                    try await foldersCallback()
+                    try await foldersCallback?()
                 }
             }
             .tint(.green)
@@ -74,7 +75,7 @@ struct TodoListItemView: View {
                         vm.deleteTodo(todo: todo)
                         vm.alert = nil
                         try await callback()
-                        try await foldersCallback()
+                        try await foldersCallback?()
                     }
                 })
             }
@@ -111,7 +112,9 @@ final class TodoListItemViewModel: ObservableObject {
     
     func deleteTodo(todo: Todo) {
         TodoManager.shared.deleteTodo(withId: todo.id)
-        FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: -1)
+        if !todo.isDone {
+            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: -1)
+        }
     }
     
     func getPriorityColor(priority: Int) -> Color {

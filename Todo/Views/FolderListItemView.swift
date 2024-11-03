@@ -14,6 +14,7 @@ struct FolderListItemView: View {
         VStack {
             Text(folder.name)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .fontWeight(folder.isEditable ? .regular : .bold)
             Text("You have \(folder.numberOfActiveTodos) active todos")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .fontWeight(.light)
