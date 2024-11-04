@@ -13,12 +13,10 @@ struct FoldersView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                if let folders = vm.folders, folders.isEmpty {
-                    Text("You don't have any folders yet. Create one to get started!")
-                } else if let folders = vm.folders, let inbox = vm.inbox {
+                if let folders = vm.folders, let inbox = vm.inbox {
                     FoldersListView(folders: folders, inbox: inbox, foldersCallback: vm.fetchFolders)
                 } else {
-                    Text("Loading")
+                    Text("Loading...")
                 }
             }
             .navigationTitle("Your folders")
@@ -37,8 +35,11 @@ struct FoldersView: View {
         } message: {
             Text(vm.alert?.message ?? "")
         }
-        .task {
-            await vm.fetchFolders()
+        .onAppear {
+            Task {
+                print("fetching")
+                await vm.fetchFolders()
+            }
         }
         .sheet(isPresented: $vm.isNewFolderSheetShowed, content: {
             NewFolderView(callback: vm.fetchFolders)
@@ -56,9 +57,7 @@ final class FoldersViewModel: ObservableObject {
     var userId: String?
     
     func fetchFolders() async {
-        if userId == nil {
-            fetchUserId()
-        }
+        fetchUserId()
         
         guard let userId else {
             let error = Errors.fetchAuthUser
@@ -81,7 +80,9 @@ final class FoldersViewModel: ObservableObject {
     }
     
     func fetchUserId() {
-        do { self.userId = try AuthManager.shared.getAuthUser().uid }
+        do {
+            self.userId = try AuthManager.shared.getAuthUser().uid
+        }
         catch {
             alert = TodoAlert(error: error)
             isAlertPresented = true

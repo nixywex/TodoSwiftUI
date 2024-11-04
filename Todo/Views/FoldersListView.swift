@@ -7,9 +7,7 @@
 
 import SwiftUI
 
-struct FoldersListView: View {
-    @StateObject var vm = FoldersListViewModel()
-    
+struct FoldersListView: View {    
     var folders: [Folder]
     var inbox: Folder
     var foldersCallback: () async throws -> Void
@@ -24,49 +22,11 @@ struct FoldersListView: View {
             Section {
                 ForEach(folders, id: \.id) { folder in
                     NavigationLink(destination: FolderView(vm: FolderViewModel(folder: folder), folders: folders, foldersCallback: foldersCallback)) {
-                        FolderListItemView(folder: folder)
-                    }
-                    .swipeActions() {
-                        Button("Delete") { vm.handleDelete() }
-                        .tint(.red)
-                        
-                        NavigationLink(destination: { FolderDetailsView(vm: FolderDetailsViewModel(folder: folder), foldersCallback: foldersCallback)}) {
-                            Button("Edit"){}
-                        }
-                        .tint(.blue)
-                    }
-                    .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
-                        vm.alert?.getCancelButton(cancel: { vm.alert = nil })
-                        if vm.alert?.type == .delete {
-                            vm.alert?.getDeleteButton(delete: {
-                                Task {
-                                    vm.deleteFolder(folderId: folder.id)
-                                    vm.alert = nil
-                                    try await foldersCallback()
-                                }
-                            })
-                        }
-                    } message: {
-                        Text(vm.alert?.message ?? "")
+                        FolderListItemView(folder: folder, foldersCallback: foldersCallback)
                     }
                 }
             }
         }
-    }
-}
-
-final class FoldersListViewModel: ObservableObject {
-    @Published var isAlertPresented: Bool = false
-    @Published var alert: TodoAlert?
-    
-    func handleDelete() {
-        self.alert = TodoAlert(title: "Delete Folder", type: .delete, message: "Are you sure you want to delete this folder?")
-        self.isAlertPresented = true
-    }
-    
-    func deleteFolder(folderId: String) {
-        FolderManager.shared.deleteFolder(withId: folderId)
-        TodoManager.shared.deleteAllTodosFromFolder(withId: folderId)
     }
 }
 

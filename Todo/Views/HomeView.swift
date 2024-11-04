@@ -38,11 +38,23 @@ struct HomeView: View {
             }
             .padding()
             .navigationTitle("Home")
+            .toolbar {
+                ToolbarItem {
+                    Button("\(Image(systemName: "plus"))") {
+                        vm.isNewTodoSheetPresent = true
+                    }
+                }
+            }
             Spacer()
         }
         .task {
             await vm.fetchTodos()
             await vm.fetchFolders()
+        }
+        .sheet(isPresented: $vm.isNewTodoSheetPresent) {
+            if let inbox = vm.getInbox() {
+                NewTodoView(vm: NewTodoViewModel(folder: inbox), callback: vm.fetchTodos, foldersCallback: vm.fetchFolders)
+            }
         }
         .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresent) {
             vm.alert?.getCancelButton(cancel: { vm.alert = nil })
@@ -57,6 +69,7 @@ final class HomeViewModel: ObservableObject {
     @Published var folders: [Folder]?
     @Published var isAlertPresent: Bool = false
     @Published var alert: TodoAlert?
+    @Published var isNewTodoSheetPresent: Bool = false
     
     func fetchTodos() async {
         do {
@@ -66,8 +79,10 @@ final class HomeViewModel: ObservableObject {
                 self.todos = self.sortTodos(todos)
             }
         } catch {
-            alert = TodoAlert.init(error: error)
-            isAlertPresent = true
+            DispatchQueue.main.async {
+                self.alert = TodoAlert.init(error: error)
+                self.isAlertPresent = true
+            }
         }
     }
     
@@ -79,13 +94,19 @@ final class HomeViewModel: ObservableObject {
                 self.folders = folders
             }
         } catch {
-            alert = TodoAlert(error: error)
-            isAlertPresent = true
+            DispatchQueue.main.async {
+                self.alert = TodoAlert.init(error: error)
+                self.isAlertPresent = true
+            }
         }
     }
     
     func getFolderName(withId id: String) -> String {
         folders?.first { $0.id == id }?.name ?? ""
+    }
+    
+    func getInbox() -> Folder? {
+        folders?.first { $0.isEditable == false } ?? folders?[0]
     }
     
     func sortTodos(_ todos: [Todo]) -> [Todo] {
