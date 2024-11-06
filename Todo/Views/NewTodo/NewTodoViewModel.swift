@@ -28,7 +28,7 @@ final class NewTodoViewModel: ObservableObject {
             try TodoManager.validate(text: text, deadline: deadline, startDate: startDate, createdAt: Date())
             try TodoManager.shared.createNewTodo(folderId: folder.id, deadline: deadline, text: text,
                                                  priority: priority.rawValue, description: description, startDate: startDate)
-            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: folder.id, to: 1)
+            FolderManager.shared.numberOfActiveTodosIncrement(withId: folder.id)
         } catch {
             self.alert = TodoAlert(error: error)
             self.isAlertPresented = true

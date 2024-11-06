@@ -8,11 +8,15 @@
 import Foundation
 import FirebaseFirestore
 
-struct DbUser: Codable {
+struct DbUser: Codable, Equatable {
     let userId: String
     let email: String
     let name: String
     let dateCreated: Date?
+    
+    static func == (lhs: DbUser, rhs: DbUser) -> Bool {
+        return lhs.userId == rhs.userId
+    }
     
     init(auth: AuthDataResult, name: String) {
         self.userId = auth.uid
@@ -32,7 +36,7 @@ final class UserManager {
         return userCollection.document(userId)
     }
     
-    private func getUser(userId: String) async throws -> DbUser {
+    func getUser(userId: String) async throws -> DbUser {
         return try await getUserReference(withId: userId).getDocument(as: DbUser.self, decoder: CodableExtentions.getDecoder())
     }
     
@@ -41,16 +45,12 @@ final class UserManager {
         try FolderManager.shared.createNewFolder(withUserId: user.userId, name: "Inbox", isEditable: false)
     }
     
-    func fetchCurrentUser() async throws -> DbUser {
-        let authResult = try AuthManager.shared.getAuthUser()
-        return try await UserManager.shared.getUser(userId: authResult.uid)
-    }
-    
     func updateUserDate(withUserId userId: String, values: [String: Any]) {
         getUserReference(withId: userId).updateData(values)
     }
     
-    func deleteUser(withId userId: String) {
-        userCollection.document(userId).delete()
+    func deleteUser(withId userId: String) async throws {
+        try await userCollection.document(userId).delete()
+        try await AuthManager.shared.deleteUser()
     }
 }

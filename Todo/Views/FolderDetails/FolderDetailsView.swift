@@ -44,7 +44,7 @@ struct FolderDetailsView: View {
             if vm.alert?.type == .delete {
                 vm.alert?.getDeleteButton(delete: {
                     Task {
-                        vm.deleteFolder()
+                        await vm.deleteFolder()
                         try await foldersCallback()
                         vm.alert = nil
                         dismiss()

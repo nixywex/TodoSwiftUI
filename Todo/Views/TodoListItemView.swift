@@ -111,10 +111,7 @@ final class TodoListItemViewModel: ObservableObject {
     }
     
     func deleteTodo(todo: Todo) {
-        TodoManager.shared.deleteTodo(withId: todo.id)
-        if !todo.isDone {
-            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: -1)
-        }
+        TodoManager.shared.deleteTodo(todo)
     }
     
     func getPriorityColor(priority: Int) -> Color {

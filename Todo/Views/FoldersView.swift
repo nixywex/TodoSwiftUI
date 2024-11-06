@@ -37,7 +37,6 @@ struct FoldersView: View {
         }
         .onAppear {
             Task {
-                print("fetching")
                 await vm.fetchFolders()
             }
         }
@@ -54,36 +53,17 @@ final class FoldersViewModel: ObservableObject {
     @Published var isAlertPresented: Bool = false
     @Published var alert: TodoAlert?
     
-    var userId: String?
-    
     func fetchFolders() async {
-        fetchUserId()
-        
-        guard let userId else {
-            let error = Errors.fetchAuthUser
-            alert = TodoAlert(error: error)
-            isAlertPresented = true
-            return
-        }
-        
         do {
-            let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
+            let userId = AuthManager.shared.user?.userId
+            guard let userId else { throw Errors.fetchAuthUser }
+            let folders = try await FolderManager.shared.getAllFoldersFromUser(withId: userId)
             
             DispatchQueue.main.async {
                 self.inbox = folders.first { $0.name == "Inbox" }
                 self.folders = folders.filter { $0.isEditable != false }
             }
         } catch {
-            alert = TodoAlert(error: error)
-            isAlertPresented = true
-        }
-    }
-    
-    func fetchUserId() {
-        do {
-            self.userId = try AuthManager.shared.getAuthUser().uid
-        }
-        catch {
             alert = TodoAlert(error: error)
             isAlertPresented = true
         }

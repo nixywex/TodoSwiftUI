@@ -38,6 +38,17 @@ final class FolderManager {
     
     private let foldersCollection = Firestore.firestore().collection("folders")
     
+    private func updateNumberOfActiveTodosInFolder(withId folderId: String, to number: Int) {
+        Task {
+            let folder = try await FolderManager.shared.getFolder(withId: folderId)
+            FolderManager.shared.updateFolder(withId: folder.id, values: [Folder.Keys.numberOfActiveTodos.rawValue: folder.numberOfActiveTodos + number])
+        }
+    }
+    
+    private func delete(withId folderId: String) {
+        foldersCollection.document(folderId).delete()
+    }
+    
     func createNewFolder(withUserId userId: String, name: String, isEditable: Bool = true) throws {
         let newFolder = Folder(name: name, userId: userId, isEditable: isEditable)
         do {
@@ -45,17 +56,17 @@ final class FolderManager {
         } catch { throw Errors.creatingNewFolder }
     }
     
-    private func getFolder(withId folderId: String) -> DocumentReference {
-        return foldersCollection.document(folderId)
-    }
-    
     func getFolder(withId folderId: String) async throws -> Folder {
-        try await foldersCollection
+        let folders = try await foldersCollection
             .whereField(Folder.Keys.id.rawValue, isEqualTo: folderId)
-            .getDocuments(as: Folder.self)[0]
+            .getDocuments(as: Folder.self)
+        
+        guard let folder = folders.first else { throw Errors.fetchingFolders }
+        
+        return folder
     }
     
-    func getFoldersFromUser(withId userId: String) async throws -> [Folder] {
+    func getAllFoldersFromUser(withId userId: String) async throws -> [Folder] {
         try await foldersCollection
             .whereField(Folder.Keys.userId.rawValue, isEqualTo: userId)
             .getDocuments(as: Folder.self)
@@ -65,23 +76,27 @@ final class FolderManager {
         foldersCollection.document(folderId).updateData(values)
     }
     
-    func updateNumberOfActiveTodosInFolder(withId folderId: String, to number: Int) {
-        Task {
-            let folder = try await FolderManager.shared.getFolder(withId: folderId)
-            FolderManager.shared.updateFolder(withId: folder.id, values: [Folder.Keys.numberOfActiveTodos.rawValue: folder.numberOfActiveTodos + number])
-        }
+    func numberOfActiveTodosIncrement(withId folderId: String) {
+        updateNumberOfActiveTodosInFolder(withId: folderId, to: 1)
     }
     
-    func deleteFolder(withId folderId: String) {
-        foldersCollection.document(folderId).delete()
+    func numberOfActiveTodosDecrement(withId folderId: String) {
+        updateNumberOfActiveTodosInFolder(withId: folderId, to: -1)
+    }
+    
+    func deleteFolder(withFolderId folderId: String) async throws {
+        try await TodoManager.shared.deleteAllTodosFromFolder(withId: folderId)
+        delete(withId: folderId)
     }
     
     func deleteAllTodosAndFoldersFromUser(withId userId: String) {
         Task {
-            let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
+            let folders = try await FolderManager.shared.getAllFoldersFromUser(withId: userId)
             folders.forEach { folder in
-                TodoManager.shared.deleteAllTodosFromFolder(withId: folder.id)
-                FolderManager.shared.deleteFolder(withId: folder.id)
+                Task {
+                    try await TodoManager.shared.deleteAllTodosFromFolder(withId: folder.id)
+                    delete(withId: folder.id)
+                }
             }
         }
     }

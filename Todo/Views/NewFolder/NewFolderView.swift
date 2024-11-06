@@ -44,9 +44,6 @@ struct NewFolderView: View {
                 }
             }
         }
-        .task {
-            await vm.loadCurrentUser()
-        }
         .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
             vm.alert?.getCancelButton(cancel: { vm.alert = nil })
         } message: {

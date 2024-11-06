@@ -72,6 +72,10 @@ final class TodoManager {
         return todosCollection.document(todoId)
     }
     
+    private func delete(withId todoId: String) {
+        getTodo(withId: todoId).delete()
+    }
+    
     func createNewTodo(folderId: String, deadline: Date,
                        text: String, priority: Int = 0, description: String = "", startDate: Date? = nil) throws {
         let newTodo = Todo(deadline: deadline, text: text, folderId: folderId, priority: priority, description: description, startDate: startDate)
@@ -82,20 +86,19 @@ final class TodoManager {
         getTodo(withId: todoId).updateData(values)
     }
     
-    func deleteTodo(withId todoId: String) {
-        getTodo(withId: todoId).delete()
+    func deleteTodo(_ todo: Todo) {
+        self.delete(withId: todo.id)
+        if !todo.isDone {
+            FolderManager.shared.numberOfActiveTodosDecrement(withId: todo.folderId)
+        }
     }
     
     func getAllTodosInFolder(withId folderId: String) async throws -> [Todo] {
         try await todosCollection.whereField(Todo.Keys.folderId.rawValue, isEqualTo: folderId).getDocuments(as: Todo.self)
     }
     
-    func getAllTodosSortedByDate(descending: Bool) async throws -> [Todo] {
-        try await todosCollection.order(by: Todo.Keys.deadline.rawValue, descending: descending).getDocuments(as: Todo.self)
-    }
-    
     func getAllTodosFromUser(withId userId: String) async throws -> [Todo] {
-        let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
+        let folders = try await FolderManager.shared.getAllFoldersFromUser(withId: userId)
         var allTodos = [Todo]()
         
         for folder in folders {
@@ -114,20 +117,9 @@ final class TodoManager {
             .getDocuments(as: Todo.self)
     }
     
-    func getAllTodosInFolderSorted(by sortType: Todo.SortType, descending: Bool, folderId: String) async throws -> [Todo] {
-        try await todosCollection
-            .whereField(Todo.Keys.folderId.rawValue, isEqualTo: folderId)
-            .order(by: sortType.rawValue, descending: descending)
-            .getDocuments(as: Todo.self)
-    }
-    
-    func deleteAllTodosFromFolder(withId folderId: String) {
-        Task {
-            let todos = try await getAllTodosInFolder(withId: folderId)
-            todos.forEach { todo in
-                deleteTodo(withId: todo.id)
-            }
-        }
+    func deleteAllTodosFromFolder(withId folderId: String) async throws {
+        let todos = try await getAllTodosInFolder(withId: folderId)
+        for todo in todos { deleteTodo(todo) }
     }
     
     static func validate(text: String, deadline: Date, startDate: Date? = nil, createdAt: Date) throws {

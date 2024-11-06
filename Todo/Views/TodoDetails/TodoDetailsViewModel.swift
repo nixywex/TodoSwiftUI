@@ -54,12 +54,17 @@ final class TodoDetailsViewModel: ObservableObject {
         TodoManager.shared.updateTodo(withId: todo.id, values: values)
         
         if todo.isDone != self.isTodoDone {
-            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: todo.isDone ? 1 : -1)
+            if todo.isDone {
+                FolderManager.shared.numberOfActiveTodosIncrement(withId: todo.folderId)
+            } else {
+                FolderManager.shared.numberOfActiveTodosDecrement(withId: todo.folderId)
+
+            }
         }
         
         if todo.folderId != self.todoFolderId {
-            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: -1)
-            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todoFolderId, to: 1)
+            FolderManager.shared.numberOfActiveTodosDecrement(withId: todo.folderId)
+            FolderManager.shared.numberOfActiveTodosIncrement(withId: todoFolderId)
         }
     }
     
@@ -69,10 +74,7 @@ final class TodoDetailsViewModel: ObservableObject {
     }
     
     func deleteTodo() {
-        TodoManager.shared.deleteTodo(withId: self.todo.id)
-        if !todo.isDone {
-            FolderManager.shared.updateNumberOfActiveTodosInFolder(withId: todo.folderId, to: -1)
-        }
+        TodoManager.shared.deleteTodo(self.todo)
     }
     
     func handleToggle() {

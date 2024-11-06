@@ -20,39 +20,42 @@ struct AuthDataResult {
 
 final class AuthManager {
     static let shared = AuthManager()
+    var user: DbUser?
     
-    private init() {}
+    private init() {
+        Task { try await fetchAuthUser() }
+    }
     
     func createUser(withEmail email: String, password: String) async throws -> AuthDataResult {
         guard let authResult = try? await Auth.auth().createUser(withEmail: email, password: password)
         else { throw Errors.creatingNewUser }
         
-        let result = AuthDataResult(user: authResult.user)
-        
-        return result
+        return AuthDataResult(user: authResult.user)
     }
     
-    func getAuthUser() throws -> AuthDataResult {
+    func fetchAuthUser() async throws {
         guard let user = Auth.auth().currentUser
         else { throw Errors.fetchAuthUser }
         
-        return AuthDataResult(user: user)
+        self.user = try await UserManager.shared.getUser(userId: user.uid)
     }
     
-    func signIn(email: String, password: String) async throws -> AuthDataResult {
+    func signIn(email: String, password: String) async throws {
         guard let authResult = try? await Auth.auth().signIn(withEmail: email, password: password)
         else { throw Errors.signIn }
         
-        return AuthDataResult(user: authResult.user)
+        try await fetchAuthUser()
     }
     
     func signOut() throws {
         try Auth.auth().signOut()
+        self.user = nil
     }
     
     func deleteUser() async throws {
         guard let user = Auth.auth().currentUser else { throw Errors.deleteUser }
         try await user.delete()
+        self.user = nil
     }
     
     static func validate(email: String, password: String, confirmPassword: String? = nil, name: String? = nil) throws {

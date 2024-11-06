@@ -37,8 +37,14 @@ final class FolderDetailsViewModel: ObservableObject {
         self.isAlertPresented = true
     }
     
-    func deleteFolder() {
-        FolderManager.shared.deleteFolder(withId: folder.id)
-        TodoManager.shared.deleteAllTodosFromFolder(withId: folder.id)
+    func deleteFolder() async {
+        do {
+            try await FolderManager.shared.deleteFolder(withFolderId: folder.id)
+        } catch {
+            DispatchQueue.main.async {
+                self.alert = TodoAlert(error: error)
+                self.isAlertPresented = true
+            }
+        }
     }
 }

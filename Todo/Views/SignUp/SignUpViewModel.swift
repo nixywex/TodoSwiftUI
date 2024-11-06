@@ -21,6 +21,7 @@ final class SignUpViewModel: ObservableObject {
             let authResult = try await AuthManager.shared.createUser(withEmail: email, password: password)
             let user = DbUser(auth: authResult, name: name)
             try UserManager.shared.createNewUserInDb(user: user)
+            _ = try await AuthManager.shared.fetchAuthUser()
         } catch {
             DispatchQueue.main.async {
                 self.alert = TodoAlert(error: error)

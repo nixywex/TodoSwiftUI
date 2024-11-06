@@ -12,18 +12,9 @@ final class ProfileViewModel: ObservableObject {
     @Published var isAlertPresented: Bool = false
     @Published var alert: TodoAlert?
     
-    func loadCurrentUser() async {
-        do {
-            let user = try await UserManager.shared.fetchCurrentUser()
-            
-            DispatchQueue.main.async {
-                self.user = user
-            }
-        } catch {
-            DispatchQueue.main.async {
-                self.alert = TodoAlert(error: error)
-                self.isAlertPresented.toggle()
-            }
+    func loadCurrentUser() {
+        DispatchQueue.main.async {
+            self.user = AuthManager.shared.user
         }
     }
     
@@ -45,11 +36,10 @@ final class ProfileViewModel: ObservableObject {
     
     func deleteAccount() async {
         do {
-            if user == nil { await loadCurrentUser() }
+            if user == nil { loadCurrentUser() }
             guard let user = self.user else { throw Errors.fetchAuthUser }
             FolderManager.shared.deleteAllTodosAndFoldersFromUser(withId: user.userId)
-            try await AuthManager.shared.deleteUser()
-            UserManager.shared.deleteUser(withId: user.userId)
+            try await UserManager.shared.deleteUser(withId: user.userId)
             DispatchQueue.main.async {
                 self.user = nil
             }

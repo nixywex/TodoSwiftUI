@@ -43,15 +43,8 @@ struct ProfileView: View {
             }
             .navigationTitle("Profile")
         }
-        .task {
-            await vm.loadCurrentUser()
-        }
-        .onChange(of: isLoginViewPresented) {
-            if !isLoginViewPresented {
-                Task {
-                    await vm.loadCurrentUser()
-                }
-            }
+        .onChange(of: isLoginViewPresented, initial: true) {
+            if !isLoginViewPresented { vm.loadCurrentUser() }
         }
         .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
             vm.alert?.getCancelButton(cancel: { vm.alert = nil })

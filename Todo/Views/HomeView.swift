@@ -21,9 +21,9 @@ struct HomeView: View {
                         List {
                             ForEach(todos, id: \.id) { todo in
                                 NavigationLink(destination: {
-                                    TodoDetailsView(vm: TodoDetailsViewModel(todo: todo), folders: folders, callback: vm.fetchTodos)
+                                    TodoDetailsView(vm: TodoDetailsViewModel(todo: todo), folders: folders, callback: vm.initData)
                                 }) {
-                                    TodoListItemView(todo: todo, callback: vm.fetchTodos,
+                                    TodoListItemView(todo: todo, callback: vm.initData,
                                                      folderName: vm.getFolderName(withId: todo.folderId))
                                 }
                             }
@@ -39,7 +39,7 @@ struct HomeView: View {
             .padding()
             .navigationTitle("Home")
             .toolbar {
-                ToolbarItem {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button("\(Image(systemName: "plus"))") {
                         vm.isNewTodoSheetPresent = true
                     }
@@ -47,13 +47,12 @@ struct HomeView: View {
             }
             Spacer()
         }
-        .task {
-            await vm.fetchTodos()
-            await vm.fetchFolders()
+        .onAppear {
+            Task { await vm.initData() }
         }
         .sheet(isPresented: $vm.isNewTodoSheetPresent) {
             if let inbox = vm.getInbox() {
-                NewTodoView(vm: NewTodoViewModel(folder: inbox), callback: vm.fetchTodos, foldersCallback: vm.fetchFolders)
+                NewTodoView(vm: NewTodoViewModel(folder: inbox), callback: vm.initData, foldersCallback: {})
             }
         }
         .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresent) {
@@ -71,26 +70,32 @@ final class HomeViewModel: ObservableObject {
     @Published var alert: TodoAlert?
     @Published var isNewTodoSheetPresent: Bool = false
     
-    func fetchTodos() async {
-        do {
-            let userId = try await UserManager.shared.fetchCurrentUser().userId
-            let todos = try await TodoManager.shared.getAllTodosFromUser(withId: userId)
-            DispatchQueue.main.async {
-                self.todos = self.sortTodos(todos)
-            }
-        } catch {
-            DispatchQueue.main.async {
-                self.alert = TodoAlert.init(error: error)
-                self.isAlertPresent = true
-            }
-        }
+    private func fetchTodos(user: DbUser) async throws -> [Todo] {
+        return try await TodoManager.shared.getAllTodosFromUser(withId: user.userId)
     }
     
-    func fetchFolders() async {
+    private func fetchFolders(user: DbUser) async throws -> [Folder] {
+        return try await FolderManager.shared.getAllFoldersFromUser(withId: user.userId)
+    }
+    
+    private func sortTodos(_ todos: [Todo]) -> [Todo] {
+        let n = todos.count > 5 ? 5 : todos.count
+        return Array(todos.sorted { $0.smartPriority < $1.smartPriority}[0..<n])
+    }
+    
+    func initData() async {
         do {
-            let userId = try await UserManager.shared.fetchCurrentUser().userId
-            let folders = try await FolderManager.shared.getFoldersFromUser(withId: userId)
+            if AuthManager.shared.user == nil {
+                _ = try await AuthManager.shared.fetchAuthUser()
+            }
+            
+            guard let user = AuthManager.shared.user else { throw Errors.fetchAuthUser }
+            
+            let todos = try await fetchTodos(user: user)
+            let folders = try await fetchFolders(user: user)
+            
             DispatchQueue.main.async {
+                self.todos = self.sortTodos(todos)
                 self.folders = folders
             }
         } catch {
@@ -107,11 +112,6 @@ final class HomeViewModel: ObservableObject {
     
     func getInbox() -> Folder? {
         folders?.first { $0.isEditable == false } ?? folders?[0]
-    }
-    
-    func sortTodos(_ todos: [Todo]) -> [Todo] {
-        let n = todos.count > 5 ? 5 : todos.count
-        return Array(todos.sorted { $0.smartPriority < $1.smartPriority}[0..<n])
     }
 }
 

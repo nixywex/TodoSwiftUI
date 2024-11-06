@@ -41,9 +41,9 @@ struct FolderListItemView: View {
             vm.alert?.getCancelButton(cancel: { vm.alert = nil })
             if vm.alert?.type == .delete {
                 vm.alert?.getDeleteButton(delete: {
-                    vm.deleteFolder(folderId: folderIdToDelete)
                     vm.alert = nil
                     Task {
+                        await vm.deleteFolder(folderId: folderIdToDelete)
                         try await foldersCallback?()
                     }
                 })
@@ -63,9 +63,15 @@ final class FolderListItemViewModel: ObservableObject {
         self.isAlertPresented = true
     }
     
-    func deleteFolder(folderId: String) {
-        FolderManager.shared.deleteFolder(withId: folderId)
-        TodoManager.shared.deleteAllTodosFromFolder(withId: folderId)
+    func deleteFolder(folderId: String) async {
+        do {
+            try await FolderManager.shared.deleteFolder(withFolderId: folderId)
+        } catch {
+            DispatchQueue.main.async {
+                self.alert = TodoAlert(error: error)
+                self.isAlertPresented = true
+            }
+        }
     }
 }
 

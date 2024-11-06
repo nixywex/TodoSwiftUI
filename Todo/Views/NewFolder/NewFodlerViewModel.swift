@@ -9,44 +9,16 @@ import Foundation
 
 final class NewFodlerViewModel: ObservableObject {
     @Published var name = ""
-    @Published var user: DbUser?
     @Published var isAlertPresented: Bool = false
     @Published var alert: TodoAlert?
     
     func handleSave() async {
-        if user == nil {
-            Task {
-                do {
-                    let user = try await UserManager.shared.fetchCurrentUser()
-                    DispatchQueue.main.async {
-                        self.user = user
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        self.alert = TodoAlert(error: error)
-                        self.isAlertPresented = true
-                    }
-                }
-            }
-        }
-        
         do {
+            guard let user = AuthManager.shared.user else { throw Errors.fetchAuthUser }
             try FolderManager.validate(name: name)
-            try FolderManager.shared.createNewFolder(withUserId: user!.userId, name: self.name)
+            try FolderManager.shared.createNewFolder(withUserId: user.userId, name: self.name)
         }
         catch {
-            DispatchQueue.main.async {
-                self.alert = TodoAlert(error: error)
-                self.isAlertPresented = true
-            }
-        }
-    }
-    
-    func loadCurrentUser() async {
-        do {
-            let user = try await UserManager.shared.fetchCurrentUser()
-            DispatchQueue.main.async { self.user = user }
-        } catch {
             DispatchQueue.main.async {
                 self.alert = TodoAlert(error: error)
                 self.isAlertPresented = true

@@ -29,11 +29,10 @@ struct MainView: View {
                     Image(systemName: "person")
                     Text("Profile")
                 }
-            
         }
         .onAppear {
-            let authUser = try? AuthManager.shared.getAuthUser()
-            self.isLoginViewPresented = authUser == nil
+            let user = AuthManager.shared.user
+            self.isLoginViewPresented = user != nil
         }
         .fullScreenCover(isPresented: $isLoginViewPresented) {
             NavigationStack {
