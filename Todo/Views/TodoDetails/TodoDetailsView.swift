@@ -10,11 +10,8 @@ import SwiftUI
 struct TodoDetailsView: View {
     @Environment(\.dismiss) var dismiss
     
+    @FetchRequest(fetchRequest: FolderCoreData.request) private var folders: FetchedResults<FolderEntity>
     @StateObject var vm: TodoDetailsViewModel
-    
-    var folders: [Folder]
-    var callback: () async throws -> Void
-    var foldersCallback: (() async throws -> Void)?
     
     var body: some View {
         NavigationStack {
@@ -67,7 +64,7 @@ struct TodoDetailsView: View {
                     HStack {
                         Image(systemName: "folder")
                         Picker("Folder", selection: $vm.todoFolderId) {
-                            ForEach(folders, id: \.id) { folder in
+                            ForEach(folders, id: \.folderId) { folder in
                                 Text(folder.name).tag(folder.id)
                             }
                         }
@@ -89,8 +86,6 @@ struct TodoDetailsView: View {
                         Task {
                             vm.handleSave()
                             if vm.alert == nil {
-                                try await callback()
-                                try await foldersCallback?()
                                 dismiss()
                             }
                         }
@@ -106,13 +101,9 @@ struct TodoDetailsView: View {
                 vm.alert?.getCancelButton(cancel: { vm.alert = nil })
                 if vm.alert?.type == .delete {
                     vm.alert?.getDeleteButton(delete: {
-                        Task {
-                            vm.deleteTodo()
-                            vm.alert = nil
-                            try await callback()
-                            try await foldersCallback?()
-                            dismiss()
-                        }
+                        vm.deleteTodo()
+                        vm.alert = nil
+                        dismiss()
                     })
                 }
             } message: {
@@ -124,6 +115,5 @@ struct TodoDetailsView: View {
 
 
 #Preview {
-    TodoDetailsView(vm: TodoDetailsViewModel(todo: PreviewExtentions.previewTodo), folders: [PreviewExtentions.previewFolder],
-                    callback: PreviewExtentions.previewCallback, foldersCallback: PreviewExtentions.previewCallback)
+    TodoDetailsView(vm: TodoDetailsViewModel(todo: TodoCoreData.preview))
 }

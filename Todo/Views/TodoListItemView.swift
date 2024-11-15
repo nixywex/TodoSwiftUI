@@ -11,19 +11,14 @@ struct TodoListItemView: View {
     @Environment(\.colorScheme) var colorScheme
     @StateObject var vm = TodoListItemViewModel()
     
-    var todo: Todo
-    var callback: () async throws -> Void
-    var foldersCallback: (() async throws -> Void)? = nil
+    @ObservedObject var todo: TodoEntity
     var folderName: String?
     
     var body: some View {
         HStack {
             Button(action: {
-                Task {
-                    await vm.checkAsDone(todo: self.todo)
-                    try await callback()
-                    try await foldersCallback?()
-                }
+                vm.checkAsDone(todo: todo)
+                
             }, label: {
                 Image(systemName: self.todo.isDone ? "circle.inset.filled" : "circle")
                     .foregroundStyle(todo.isDone ? .gray : .blue)
@@ -55,9 +50,7 @@ struct TodoListItemView: View {
         .swipeActions {
             Button(todo.isDone ? "Not done" : "Done") {
                 Task {
-                    await vm.checkAsDone(todo: todo)
-                    try await callback()
-                    try await foldersCallback?()
+                    vm.checkAsDone(todo: todo)
                 }
             }
             .tint(.green)
@@ -74,8 +67,6 @@ struct TodoListItemView: View {
                     Task {
                         vm.deleteTodo(todo: todo)
                         vm.alert = nil
-                        try await callback()
-                        try await foldersCallback?()
                     }
                 })
             }
@@ -89,20 +80,9 @@ final class TodoListItemViewModel: ObservableObject {
     @Published var isAlertPresented: Bool = false
     @Published var alert: TodoAlert?
     
-    func checkAsDone(todo: Todo) async {
-        TodoManager.shared.updateTodo(withId: todo.id, values: ["is_done": !todo.isDone])
-        
-        do {
-            let folder = try await FolderManager.shared.getFolder(withId: todo.folderId)
-            let result = todo.isDone ? folder.numberOfActiveTodos + 1 : folder.numberOfActiveTodos - 1
-            
-            FolderManager.shared.updateFolder(withId: folder.id, values: [Folder.Keys.numberOfActiveTodos.rawValue: result])
-        } catch {
-            DispatchQueue.main.async {
-                self.alert = TodoAlert(error: error)
-                self.isAlertPresented = true
-            }
-        }
+    func checkAsDone(todo: TodoEntity) {
+        todo.isDone.toggle()
+        CoreDataManager.shared.save()
     }
     
     func handleDelete() {
@@ -110,11 +90,11 @@ final class TodoListItemViewModel: ObservableObject {
         self.isAlertPresented = true
     }
     
-    func deleteTodo(todo: Todo) {
-        TodoManager.shared.deleteTodo(todo)
+    func deleteTodo(todo: TodoEntity) {
+        TodoCoreData.delete(todo: todo)
     }
     
-    func getPriorityColor(priority: Int) -> Color {
+    func getPriorityColor(priority: Int16) -> Color {
         switch priority {
         case -1 : return .green
         case 0: return .yellow
@@ -133,5 +113,5 @@ final class TodoListItemViewModel: ObservableObject {
 }
 
 #Preview {
-    TodoListItemView(todo: PreviewExtentions.previewTodo, callback: PreviewExtentions.previewCallback, foldersCallback: PreviewExtentions.previewCallback)
+    TodoListItemView(todo: TodoCoreData.preview)
 }

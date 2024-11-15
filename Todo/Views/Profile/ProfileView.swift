@@ -25,6 +25,15 @@ struct ProfileView: View {
                         Text("Loading...")
                     }
                     
+                    Button("Push data") {
+                        do {
+                            try CoreDataManager.shared.push()
+                        } catch {
+                            vm.alert = TodoAlert(error: error)
+                            vm.isAlertPresented.toggle()
+                        }
+                    }
+                    
                     Button("Sign out") {
                         vm.signOut()
                         self.isLoginViewPresented.toggle()

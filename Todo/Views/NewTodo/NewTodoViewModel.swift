@@ -17,18 +17,17 @@ final class NewTodoViewModel: ObservableObject {
     @Published var isAlertPresented: Bool = false
     @Published var alert: TodoAlert?
     
-    let folder: Folder
+    let folder: FolderEntity
     
-    init(folder: Folder) {
+    init(folder: FolderEntity) {
         self.folder = folder
     }
     
-    func handleSaveButton() async {
+    func handleSaveButton() {
         do {
             try TodoManager.validate(text: text, deadline: deadline, startDate: startDate, createdAt: Date())
-            try TodoManager.shared.createNewTodo(folderId: folder.id, deadline: deadline, text: text,
-                                                 priority: priority.rawValue, description: description, startDate: startDate)
-            FolderManager.shared.numberOfActiveTodosIncrement(withId: folder.id)
+            let todo = Todo(deadline: deadline, text: text, folderId: folder.folderId, priority: priority.rawValue, description: description, startDate: startDate)
+            TodoCoreData.add(todo: todo)
         } catch {
             self.alert = TodoAlert(error: error)
             self.isAlertPresented = true

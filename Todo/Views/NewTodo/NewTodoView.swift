@@ -12,9 +12,6 @@ struct NewTodoView: View {
     
     @StateObject var vm: NewTodoViewModel
     
-    var callback: () async throws -> Void
-    var foldersCallback: () async throws -> Void
-    
     var body: some View {
         NavigationStack {
             VStack {
@@ -72,10 +69,8 @@ struct NewTodoView: View {
                     ToolbarItem (placement: .topBarTrailing) {
                         Button(action: {
                             Task {
-                                await vm.handleSaveButton()
+                                vm.handleSaveButton()
                                 if vm.alert == nil {
-                                    try await callback()
-                                    try await foldersCallback()
                                     dismiss()
                                 }
                             }
@@ -98,5 +93,5 @@ struct NewTodoView: View {
 }
 
 #Preview {
-    NewTodoView(vm: NewTodoViewModel(folder: PreviewExtentions.previewFolder), callback: PreviewExtentions.previewCallback, foldersCallback: PreviewExtentions.previewCallback)
+    NewTodoView(vm: NewTodoViewModel(folder: FolderCoreData.preview))
 }

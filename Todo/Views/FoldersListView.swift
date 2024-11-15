@@ -7,23 +7,26 @@
 
 import SwiftUI
 
-struct FoldersListView: View {    
-    var folders: [Folder]
-    var inbox: Folder
-    var foldersCallback: () async throws -> Void
+struct FoldersListView: View {
+    @FetchRequest(fetchRequest: FolderCoreData.request) private var folders: FetchedResults<FolderEntity>
+    @FetchRequest(fetchRequest: FolderCoreData.inboxRequest) private var inbox: FetchedResults<FolderEntity>
     
     var body: some View {
         List {
-            Section {
-                NavigationLink(destination: FolderView(vm: FolderViewModel(folder: inbox), folders: folders + [inbox], foldersCallback: foldersCallback)) {
-                    FolderListItemView(folder: inbox)
+            if let inbox = inbox.first {
+                Section {
+                    NavigationLink(destination: FolderView(folder: inbox)) {
+                        FolderListItemView(folder: inbox)
+                    }
                 }
             }
+            
             Section {
-                ForEach(folders, id: \.id) { folder in
-                    NavigationLink(destination: FolderView(vm: FolderViewModel(folder: folder), folders: folders, foldersCallback: foldersCallback)) {
-                        FolderListItemView(folder: folder, foldersCallback: foldersCallback)
+                ForEach(folders, id: \.folderId) { folder in
+                    NavigationLink(destination: FolderView(folder: folder)) {
+                        FolderListItemView(folder: folder)
                     }
+                    
                 }
             }
         }
@@ -31,5 +34,5 @@ struct FoldersListView: View {
 }
 
 #Preview {
-    FoldersListView(folders: [PreviewExtentions.previewFolder], inbox: PreviewExtentions.previewFolder, foldersCallback: PreviewExtentions.previewCallback)
+    FoldersListView()
 }

@@ -8,38 +8,30 @@
 import SwiftUI
 
 struct TodosListSectionView: View {
-    @StateObject var vm: TodosListSectionViewModel
+    @FetchRequest private var todos: FetchedResults<TodoEntity>
+    @State var isSectionExpanded: Bool
+    @State var isDoneSection: Bool
     
-    var todos: [Todo]
-    var folders: [Folder]
-    var foldersCallback: () async throws -> Void
-    var callback: () async throws -> Void
+    init(sortType: Todo.SortType, isDoneSection: Bool) {
+        let request = TodoCoreData.getRequest(sortType: sortType, isDone: isDoneSection)
+        _todos = FetchRequest(fetchRequest: request)
+        self.isDoneSection = isDoneSection
+        _isSectionExpanded = State(initialValue: !isDoneSection)
+    }
     
     var body: some View {
-        Section("\(vm.isDoneSection ? "Completed" : "Current") todos", isExpanded: $vm.isSectionExpanded) {
-            ForEach(todos, id: \.id) { todo in
+        Section("\(isDoneSection ? "Completed" : "Current") todos", isExpanded: $isSectionExpanded) {
+            ForEach(todos, id: \.todoId) { todo in
                 NavigationLink(destination: {
-                    TodoDetailsView(vm: TodoDetailsViewModel(todo: todo), folders: folders, callback: callback, foldersCallback: foldersCallback)
+                    TodoDetailsView(vm: TodoDetailsViewModel(todo: todo))
                 }) {
-                    TodoListItemView(todo: todo, callback: callback, foldersCallback: foldersCallback)
+                    TodoListItemView(todo: todo)
                 }
             }
         }
     }
 }
 
-final class TodosListSectionViewModel: ObservableObject {
-    @Published var isSectionExpanded: Bool
-    @Published var isDoneSection: Bool
-    
-    init(isDoneSection: Bool) {
-        self.isSectionExpanded = !isDoneSection
-        self.isDoneSection = isDoneSection
-    }
-}
-
 #Preview {
-    TodosListSectionView(vm: TodosListSectionViewModel(isDoneSection: .init(true)),
-                         todos: [PreviewExtentions.previewTodo], folders: [PreviewExtentions.previewFolder],
-                         foldersCallback: PreviewExtentions.previewCallback, callback: PreviewExtentions.previewCallback)
+    TodosListSectionView(sortType: Todo.SortType.priority, isDoneSection: true)
 }

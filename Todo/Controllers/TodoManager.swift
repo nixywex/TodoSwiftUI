@@ -27,16 +27,16 @@ struct Todo: Codable {
         else { return difference * coefficient }
     }
     
-    init(deadline: Date, text: String, folderId: String, priority: Int = 0, description: String = "", startDate: Date? = nil) {
+    init(deadline: Date, text: String, folderId: String, priority: Int = 0, description: String = "", startDate: Date? = nil, id: String? = nil, isDone: Bool = false, createdAt: Date = Date()) {
         self.deadline = deadline
         self.description = description
         self.priority = priority
         self.text = text
         self.startDate = startDate
-        self.id = UUID().uuidString
-        self.isDone = false
+        self.id = id ?? UUID().uuidString
+        self.isDone = isDone
         self.folderId = folderId
-        self.createdAt = Date()
+        self.createdAt = createdAt
     }
     
     enum Priority: Int {
@@ -80,6 +80,11 @@ final class TodoManager {
                        text: String, priority: Int = 0, description: String = "", startDate: Date? = nil) throws {
         let newTodo = Todo(deadline: deadline, text: text, folderId: folderId, priority: priority, description: description, startDate: startDate)
         try todosCollection.document(newTodo.id).setData(from: newTodo, merge: false, encoder: CodableExtentions.getEncoder())
+    }
+    
+    static func convert(todo: TodoEntity) -> Todo {
+        Todo(deadline: todo.deadline, text: todo.text, folderId: todo.folderId, priority: Int(todo.priority),
+             description: todo.todoDescription, startDate: todo.startDate, id: todo.todoId, isDone: todo.isDone, createdAt: todo.createdAt)
     }
     
     func updateTodo(withId todoId: String, values: [String: Any]) {

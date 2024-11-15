@@ -10,26 +10,24 @@ import Foundation
 final class FolderDetailsViewModel: ObservableObject {
     @Published var isAlertPresented: Bool = false
     @Published var alert: TodoAlert?
+    @Published var name: String
     
-    var folder: Folder
+    var folder: FolderEntity
     
-    init(folder: Folder) {
+    init(folder: FolderEntity) {
         self.folder = folder
+        self.name = folder.name
     }
     
     func handleSave() {
         do {
-            try FolderManager.validate(name: folder.name)
+            try FolderManager.validate(name: name)
+            folder.name = name
+            CoreDataManager.shared.save()
         } catch {
             self.alert = TodoAlert(error: error)
             self.isAlertPresented = true
         }
-        
-        let values: [String: Any] = [
-            "name": self.folder.name,
-        ]
-        
-        FolderManager.shared.updateFolder(withId: folder.id, values: values)
     }
     
     func handleDelete() {
@@ -37,14 +35,7 @@ final class FolderDetailsViewModel: ObservableObject {
         self.isAlertPresented = true
     }
     
-    func deleteFolder() async {
-        do {
-            try await FolderManager.shared.deleteFolder(withFolderId: folder.id)
-        } catch {
-            DispatchQueue.main.async {
-                self.alert = TodoAlert(error: error)
-                self.isAlertPresented = true
-            }
-        }
+    func deleteFolder() {
+        FolderCoreData.delete(folder: folder)
     }
 }

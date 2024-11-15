@@ -13,6 +13,8 @@ struct DbUser: Codable, Equatable {
     let email: String
     let name: String
     let dateCreated: Date?
+    var todos: [Todo]
+    var folders: [Folder]
     
     static func == (lhs: DbUser, rhs: DbUser) -> Bool {
         return lhs.userId == rhs.userId
@@ -23,6 +25,8 @@ struct DbUser: Codable, Equatable {
         self.email = auth.email ?? "error"
         self.name = name
         self.dateCreated = Date()
+        self.todos = []
+        self.folders = []
     }
 }
 
@@ -46,6 +50,10 @@ final class UserManager {
     }
     
     func updateUserDate(withUserId userId: String, values: [String: Any]) {
+        getUserReference(withId: userId).updateData(values)
+    }
+    
+    func updateUser(withId userId: String, values: [String: Any]) {
         getUserReference(withId: userId).updateData(values)
     }
     

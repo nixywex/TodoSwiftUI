@@ -11,8 +11,6 @@ struct NewFolderView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var vm = NewFodlerViewModel()
     
-    var callback: () async throws -> Void
-    
     var body: some View {
         NavigationStack {
             List {
@@ -27,7 +25,6 @@ struct NewFolderView: View {
                         Task {
                             await vm.handleSave()
                             if vm.alert == nil {
-                                try await callback()
                                 dismiss()
                             }
                         }
@@ -54,5 +51,5 @@ struct NewFolderView: View {
 
 
 #Preview {
-    NewFolderView(callback: PreviewExtentions.previewCallback)
+    NewFolderView()
 }

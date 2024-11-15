@@ -9,15 +9,14 @@ import SwiftUI
 
 struct FolderDetailsView: View {
     @Environment(\.dismiss) var dismiss
-    @StateObject var vm: FolderDetailsViewModel
     
-    var foldersCallback: () async throws -> Void
+    @StateObject var vm: FolderDetailsViewModel
     
     var body: some View {
         NavigationStack {
             List {
                 Section("Edit your folder") {
-                    TextField("Enter folder name", text: $vm.folder.name)
+                    TextField("Enter folder name", text: $vm.name)
                 }
                 
                 Section("Actions") {
@@ -29,7 +28,6 @@ struct FolderDetailsView: View {
                         vm.handleSave()
                         Task {
                             if vm.alert == nil {
-                                try await foldersCallback()
                                 dismiss()
                             }
                         }
@@ -44,8 +42,7 @@ struct FolderDetailsView: View {
             if vm.alert?.type == .delete {
                 vm.alert?.getDeleteButton(delete: {
                     Task {
-                        await vm.deleteFolder()
-                        try await foldersCallback()
+                        vm.deleteFolder()
                         vm.alert = nil
                         dismiss()
                     }
@@ -58,5 +55,5 @@ struct FolderDetailsView: View {
 }
 
 #Preview {
-    FolderDetailsView(vm: FolderDetailsViewModel(folder: PreviewExtentions.previewFolder), foldersCallback: PreviewExtentions.previewCallback)
+    FolderDetailsView(vm: FolderDetailsViewModel(folder: FolderCoreData.preview))
 }

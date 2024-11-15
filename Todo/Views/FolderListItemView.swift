@@ -9,9 +9,7 @@ import SwiftUI
 
 struct FolderListItemView: View {
     @StateObject var vm = FolderListItemViewModel()
-    
-    var folder: Folder
-    var foldersCallback: (() async throws -> Void)?
+    @ObservedObject var folder: FolderEntity
     
     var body: some View {
         VStack {
@@ -30,21 +28,21 @@ struct FolderListItemView: View {
                 }
                 .tint(.red)
                 
-                NavigationLink(destination: { FolderDetailsView(vm: FolderDetailsViewModel(folder: folder), foldersCallback: foldersCallback ?? {})}) {
+                NavigationLink(destination: {
+                    FolderDetailsView(vm: FolderDetailsViewModel(folder: folder))
+                }) {
                     Button("Edit"){}
                 }
                 .tint(.blue)
             }
         }
         .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
-            let folderIdToDelete = folder.id
             vm.alert?.getCancelButton(cancel: { vm.alert = nil })
             if vm.alert?.type == .delete {
                 vm.alert?.getDeleteButton(delete: {
                     vm.alert = nil
                     Task {
-                        await vm.deleteFolder(folderId: folderIdToDelete)
-                        try await foldersCallback?()
+                        vm.deleteFolder(folder: folder)
                     }
                 })
             }
@@ -63,18 +61,11 @@ final class FolderListItemViewModel: ObservableObject {
         self.isAlertPresented = true
     }
     
-    func deleteFolder(folderId: String) async {
-        do {
-            try await FolderManager.shared.deleteFolder(withFolderId: folderId)
-        } catch {
-            DispatchQueue.main.async {
-                self.alert = TodoAlert(error: error)
-                self.isAlertPresented = true
-            }
-        }
+    func deleteFolder(folder: FolderEntity) {
+        FolderCoreData.delete(folder: folder)
     }
 }
 
 #Preview {
-    FolderListItemView(folder: PreviewExtentions.previewFolder, foldersCallback: PreviewExtentions.previewCallback)
+    FolderListItemView(folder: FolderCoreData.preview)
 }
