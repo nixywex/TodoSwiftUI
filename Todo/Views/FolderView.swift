@@ -16,9 +16,10 @@ struct FolderView: View {
     var body: some View {
         NavigationStack {
             List {
-                TodosListSectionView(sortType: sortType, isDoneSection: false)
-                TodosListSectionView(sortType: sortType, isDoneSection: true)
+                TodosListSectionView(sortType: sortType, isDoneSection: false, folder: folder)
+                TodosListSectionView(sortType: sortType, isDoneSection: true, folder: folder)
             }
+            .listStyle(SidebarListStyle())
             .navigationTitle(folder.name)
         }
         .toolbar {
@@ -30,9 +31,6 @@ struct FolderView: View {
                             Text("Todo text").tag(Todo.SortType.text)
                             Text("Priority").tag(Todo.SortType.priority)
                         }
-                        //                        .onChange(of: sortType) {
-                        //                            Task { await vm.fetchTodos() }
-                        //                        }
                     }
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease")

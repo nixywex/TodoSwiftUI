@@ -25,7 +25,7 @@ final class NewTodoViewModel: ObservableObject {
     
     func handleSaveButton() {
         do {
-            try TodoManager.validate(text: text, deadline: deadline, startDate: startDate, createdAt: Date())
+            try Todo.validate(text: text, deadline: deadline, startDate: startDate, createdAt: Date())
             let todo = Todo(deadline: deadline, text: text, folderId: folder.folderId, priority: priority.rawValue, description: description, startDate: startDate)
             TodoCoreData.add(todo: todo)
         } catch {

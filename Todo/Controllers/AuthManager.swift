@@ -41,7 +41,7 @@ final class AuthManager {
     }
     
     func signIn(email: String, password: String) async throws {
-        guard let authResult = try? await Auth.auth().signIn(withEmail: email, password: password)
+        guard let _ = try? await Auth.auth().signIn(withEmail: email, password: password)
         else { throw Errors.signIn }
         
         try await fetchAuthUser()

@@ -35,7 +35,16 @@ final class TodoDetailsViewModel: ObservableObject {
     
     func handleSave() {
         do {
-            try TodoManager.validate(text: todoText, deadline: todoDeadline, startDate: todoStartDate, createdAt: todo.createdAt)
+            try Todo.validate(text: todoText, deadline: todoDeadline, startDate: todoStartDate, createdAt: todo.createdAt)
+            
+            if todo.folderId != todoFolderId {
+                try FolderCoreData.updateNumberOfActiveTodos(inFolderWithId: todo.folderId, value: -1)
+                try FolderCoreData.updateNumberOfActiveTodos(inFolderWithId: todoFolderId, value: 1)
+            }
+            
+            if todo.isDone != isTodoDone {
+                try FolderCoreData.updateNumberOfActiveTodos(inFolderWithId: todo.folderId, value: isTodoDone ? -1 : 1)
+            }
         } catch {
             self.alert = TodoAlert(error: error)
             self.isAlertPresented = true
@@ -43,13 +52,15 @@ final class TodoDetailsViewModel: ObservableObject {
         
         todo.text = todoText
         todo.deadline = todoDeadline
+        todo.folderId = todoFolderId
         todo.isDone = isTodoDone
         todo.startDate = todoStartDate
         todo.todoDescription = todoDescription
         todo.priority = Int16(todoPriority.rawValue)
         todo.folderId = todoFolderId
-        //TODO: update number of active todos in folder
-        CoreDataManager.shared.save()
+        DispatchQueue.main.async {
+            CoreDataManager.shared.save()
+        }
     }
     
     func handleDelete() {
@@ -58,8 +69,13 @@ final class TodoDetailsViewModel: ObservableObject {
     }
     
     func deleteTodo() {
-        //TODO: update number of active todos in folder
-        TodoCoreData.delete(todo: todo)
+        do {
+            try FolderCoreData.updateNumberOfActiveTodos(inFolderWithId: todo.folderId, value: -1)
+            TodoCoreData.delete(todo: todo)
+        } catch {
+            self.alert = TodoAlert(error: error)
+            self.isAlertPresented = true
+        }
     }
     
     func handleToggle() {

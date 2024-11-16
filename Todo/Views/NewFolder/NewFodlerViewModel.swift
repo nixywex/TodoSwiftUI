@@ -14,7 +14,7 @@ final class NewFodlerViewModel: ObservableObject {
     
     func handleSave() async {
         do {
-            try FolderManager.validate(name: name)
+            try Folder.validate(name: name)
             guard let userId = AuthManager.shared.user?.userId else { throw Errors.fetchAuthUser }
             let folder = Folder(name: name, userId: userId)
             FolderCoreData.add(folder: folder)

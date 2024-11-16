@@ -38,7 +38,6 @@ final class ProfileViewModel: ObservableObject {
         do {
             if user == nil { loadCurrentUser() }
             guard let user = self.user else { throw Errors.fetchAuthUser }
-            FolderManager.shared.deleteAllTodosAndFoldersFromUser(withId: user.userId)
             try await UserManager.shared.deleteUser(withId: user.userId)
             DispatchQueue.main.async {
                 self.user = nil

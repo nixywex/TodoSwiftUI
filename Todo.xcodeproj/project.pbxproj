@@ -15,8 +15,7 @@
 		F0267DAA2C7FAFA5001C2FEB /* NewFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DA92C7FAFA5001C2FEB /* NewFolderView.swift */; };
 		F0267DAC2C7FBFF2001C2FEB /* FoldersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DAB2C7FBFF2001C2FEB /* FoldersView.swift */; };
 		F0267DAE2C7FC37F001C2FEB /* FolderListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DAD2C7FC37F001C2FEB /* FolderListItemView.swift */; };
-		F0267DB12C808281001C2FEB /* TodoEntityExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DB02C808281001C2FEB /* TodoEntityExtentions.swift */; };
-		F0267DB32C8082AB001C2FEB /* FolderEntityExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DB22C8082AB001C2FEB /* FolderEntityExtentions.swift */; };
+		F0267DB12C808281001C2FEB /* EntitiesExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DB02C808281001C2FEB /* EntitiesExtentions.swift */; };
 		F0267DB52C808905001C2FEB /* FolderDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DB42C808905001C2FEB /* FolderDetailsView.swift */; };
 		F0267DB82C808A59001C2FEB /* FolderDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DB72C808A59001C2FEB /* FolderDetailsViewModel.swift */; };
 		F0267DBA2C808D50001C2FEB /* AlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DB92C808D50001C2FEB /* AlertController.swift */; };
@@ -58,8 +57,7 @@
 		F0267DA92C7FAFA5001C2FEB /* NewFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewFolderView.swift; sourceTree = "<group>"; };
 		F0267DAB2C7FBFF2001C2FEB /* FoldersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersView.swift; sourceTree = "<group>"; };
 		F0267DAD2C7FC37F001C2FEB /* FolderListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderListItemView.swift; sourceTree = "<group>"; };
-		F0267DB02C808281001C2FEB /* TodoEntityExtentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoEntityExtentions.swift; sourceTree = "<group>"; };
-		F0267DB22C8082AB001C2FEB /* FolderEntityExtentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderEntityExtentions.swift; sourceTree = "<group>"; };
+		F0267DB02C808281001C2FEB /* EntitiesExtentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntitiesExtentions.swift; sourceTree = "<group>"; };
 		F0267DB42C808905001C2FEB /* FolderDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderDetailsView.swift; sourceTree = "<group>"; };
 		F0267DB72C808A59001C2FEB /* FolderDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderDetailsViewModel.swift; sourceTree = "<group>"; };
 		F0267DB92C808D50001C2FEB /* AlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertController.swift; sourceTree = "<group>"; };
@@ -118,8 +116,7 @@
 			isa = PBXGroup;
 			children = (
 				F04777B12C73909600A3C7FA /* PreviewExtentions.swift */,
-				F0267DB02C808281001C2FEB /* TodoEntityExtentions.swift */,
-				F0267DB22C8082AB001C2FEB /* FolderEntityExtentions.swift */,
+				F0267DB02C808281001C2FEB /* EntitiesExtentions.swift */,
 				F0110D7F2CD02C2B00EE54AD /* OtherExtentions.swift */,
 			);
 			path = Extentions;
@@ -346,11 +343,10 @@
 				F0267DAC2C7FBFF2001C2FEB /* FoldersView.swift in Sources */,
 				F0D684D02CCBE5A2003DB0B1 /* LoginView.swift in Sources */,
 				F08FD5362CE13F4900533AF0 /* TodoDataModel.xcdatamodeld in Sources */,
-				F0267DB12C808281001C2FEB /* TodoEntityExtentions.swift in Sources */,
+				F0267DB12C808281001C2FEB /* EntitiesExtentions.swift in Sources */,
 				F0774FCD2C986A7C00A9CA07 /* MainView.swift in Sources */,
 				F0D684E12CCBF6A1003DB0B1 /* ProfileViewModel.swift in Sources */,
 				F0267DAE2C7FC37F001C2FEB /* FolderListItemView.swift in Sources */,
-				F0267DB32C8082AB001C2FEB /* FolderEntityExtentions.swift in Sources */,
 				F00FCBB62C73CA8900F45A30 /* TodoDetailsView.swift in Sources */,
 				F0D684EA2CCC17EE003DB0B1 /* SignUpViewModel.swift in Sources */,
 				F08FFC382C7245BE0011A378 /* FolderView.swift in Sources */,

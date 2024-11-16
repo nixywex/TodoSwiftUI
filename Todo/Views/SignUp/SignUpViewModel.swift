@@ -21,19 +21,7 @@ final class SignUpViewModel: ObservableObject {
             let authResult = try await AuthManager.shared.createUser(withEmail: email, password: password)
             let user = DbUser(auth: authResult, name: name)
             try UserManager.shared.createNewUserInDb(user: user)
-            var inbox: [String: Any] {
-                let folder = Folder(name: "Inbox", userId: user.userId, isEditable: false)
-                return [
-                    "id": folder.id,
-                    "name": folder.name,
-                    "numberOfActiveTodos": folder.numberOfActiveTodos,
-                    "userId": folder.userId,
-                    "isEditable": folder.isEditable
-                ]
-            }
-            //TODO: Re-write this metod
-            let folders = [inbox]
-            UserManager.shared.updateUser(withId: authResult.uid, values: ["folders": folders])
+            FolderCoreData.createInbox(userId: user.userId)
             _ = try await AuthManager.shared.fetchAuthUser()
         } catch {
             DispatchQueue.main.async {

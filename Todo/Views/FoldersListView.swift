@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FoldersListView: View {
-    @FetchRequest(fetchRequest: FolderCoreData.request) private var folders: FetchedResults<FolderEntity>
+    @FetchRequest(fetchRequest: FolderCoreData.requestWithoutInbox) private var folders: FetchedResults<FolderEntity>
     @FetchRequest(fetchRequest: FolderCoreData.inboxRequest) private var inbox: FetchedResults<FolderEntity>
     
     var body: some View {

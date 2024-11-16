@@ -21,9 +21,11 @@ final class FolderDetailsViewModel: ObservableObject {
     
     func handleSave() {
         do {
-            try FolderManager.validate(name: name)
+            try Folder.validate(name: name)
             folder.name = name
-            CoreDataManager.shared.save()
+            DispatchQueue.main.async {
+                CoreDataManager.shared.save()
+            }
         } catch {
             self.alert = TodoAlert(error: error)
             self.isAlertPresented = true

@@ -10,7 +10,8 @@ import SwiftUI
 struct HomeView: View {
     @FetchRequest(fetchRequest: TodoCoreData.smartPriorityRequest) private var todos: FetchedResults<TodoEntity>
     @FetchRequest(fetchRequest: FolderCoreData.request) private var folders: FetchedResults<FolderEntity>
-    
+    @FetchRequest(fetchRequest: FolderCoreData.inboxRequest) private var inbox: FetchedResults<FolderEntity>
+
     @StateObject var vm = HomeViewModel()
     
     var body: some View {
@@ -25,7 +26,7 @@ struct HomeView: View {
                             NavigationLink(destination: {
                                 TodoDetailsView(vm: TodoDetailsViewModel(todo: todo))
                             }) {
-                                TodoListItemView(todo: todo, folderName: getFolderName(withId: todo.folderId))
+                                TodoListItemView(todo: todo, folderName: vm.getFolderName(withId: todo.folderId, folders: folders))
                             }
                         }
                     }
@@ -48,17 +49,14 @@ struct HomeView: View {
         .onAppear {
             if !vm.isFetchPerformed {
                 Task {
-                    await fetch()
+                    await vm.fetch()
                     vm.isFetchPerformed = true
                 }
             }
         }
         .sheet(isPresented: $vm.isNewTodoSheetPresent) {
-            if let inbox = getInbox() {
+            if let inbox = inbox.first {
                 NewTodoView(vm: NewTodoViewModel(folder: inbox))
-            } else {
-                //TODO: Create new inbox
-                Text("Something went wrong, we can't find your inbox.")
             }
         }
         .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
@@ -69,14 +67,15 @@ struct HomeView: View {
     }
 }
 
-extension HomeView {
-    //TODO: move all methods to vm
-    private func fetch() async {
-        //TODO: Re-write this method
-        todos.forEach { TodoCoreData.delete(todo: $0) }
-        folders.forEach { FolderCoreData.delete(folder: $0) }
-        
+final class HomeViewModel: ObservableObject {
+    @Published var isAlertPresented: Bool = false
+    @Published var isNewTodoSheetPresent: Bool = false
+    @Published var isFetchPerformed = false
+    @Published var alert: TodoAlert?
+    
+    func fetch() async {
         do {
+            try CoreDataManager.shared.clear()
             _ = try await AuthManager.shared.fetchAuthUser()
             let todosFirebase = AuthManager.shared.user?.todos ?? []
             let foldersFirebase = AuthManager.shared.user?.folders ?? []
@@ -90,26 +89,15 @@ extension HomeView {
             }
         } catch {
             DispatchQueue.main.async {
-                vm.alert = TodoAlert(error: error)
-                vm.isAlertPresented = true
+                self.alert = TodoAlert(error: error)
+                self.isAlertPresented = true
             }
         }
     }
     
-    private func getFolderName(withId id: String) -> String? {
+    func getFolderName(withId id: String, folders: FetchedResults<FolderEntity>) -> String? {
         folders.first { $0.folderId == id }?.name ?? nil
     }
-    
-    private func getInbox() -> FolderEntity? {
-        folders.first { $0.name == "Inbox" && $0.isEditable == false }
-    }
-}
-
-final class HomeViewModel: ObservableObject {
-    @Published var isAlertPresented: Bool = false
-    @Published var isNewTodoSheetPresent: Bool = false
-    @Published var isFetchPerformed = false
-    @Published var alert: TodoAlert?
 }
 
 #Preview {

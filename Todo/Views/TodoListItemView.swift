@@ -82,7 +82,15 @@ final class TodoListItemViewModel: ObservableObject {
     
     func checkAsDone(todo: TodoEntity) {
         todo.isDone.toggle()
-        CoreDataManager.shared.save()
+        do {
+            try FolderCoreData.updateNumberOfActiveTodos(inFolderWithId: todo.folderId, value: todo.isDone ? -1 : 1)
+            DispatchQueue.main.async {
+                CoreDataManager.shared.save()
+            }
+        } catch {
+            self.alert = TodoAlert(error: error)
+            self.isAlertPresented = true
+        }
     }
     
     func handleDelete() {
@@ -91,7 +99,13 @@ final class TodoListItemViewModel: ObservableObject {
     }
     
     func deleteTodo(todo: TodoEntity) {
-        TodoCoreData.delete(todo: todo)
+        do {
+            try FolderCoreData.updateNumberOfActiveTodos(inFolderWithId: todo.folderId, value: -1)
+            TodoCoreData.delete(todo: todo)
+        } catch {
+            self.alert = TodoAlert(error: error)
+            self.isAlertPresented = true
+        }
     }
     
     func getPriorityColor(priority: Int16) -> Color {

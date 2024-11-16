@@ -12,8 +12,8 @@ struct TodosListSectionView: View {
     @State var isSectionExpanded: Bool
     @State var isDoneSection: Bool
     
-    init(sortType: Todo.SortType, isDoneSection: Bool) {
-        let request = TodoCoreData.getRequest(sortType: sortType, isDone: isDoneSection)
+    init(sortType: Todo.SortType, isDoneSection: Bool, folder: FolderEntity) {
+        let request = TodoCoreData.getRequest(isDone: isDoneSection, sortType: sortType, folder: folder)
         _todos = FetchRequest(fetchRequest: request)
         self.isDoneSection = isDoneSection
         _isSectionExpanded = State(initialValue: !isDoneSection)
@@ -33,5 +33,5 @@ struct TodosListSectionView: View {
 }
 
 #Preview {
-    TodosListSectionView(sortType: Todo.SortType.priority, isDoneSection: true)
+    TodosListSectionView(sortType: Todo.SortType.priority, isDoneSection: true, folder: FolderCoreData.preview)
 }

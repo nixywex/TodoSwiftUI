@@ -46,14 +46,9 @@ final class UserManager {
     
     func createNewUserInDb(user: DbUser) throws {
         try getUserReference(withId: user.userId).setData(from: user, merge: false, encoder: CodableExtentions.getEncoder())
-        try FolderManager.shared.createNewFolder(withUserId: user.userId, name: "Inbox", isEditable: false)
     }
     
-    func updateUserDate(withUserId userId: String, values: [String: Any]) {
-        getUserReference(withId: userId).updateData(values)
-    }
-    
-    func updateUser(withId userId: String, values: [String: Any]) {
+    func updateUserData(withUserId userId: String, values: [String: Any]) {
         getUserReference(withId: userId).updateData(values)
     }
     

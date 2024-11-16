@@ -29,6 +29,7 @@ enum Errors: Error, LocalizedError {
     case todoDeadline
     case folderName
     case folderNameInbox
+    case clearingCoreData
     
     var errorDescription: String? {
         switch self {
@@ -70,6 +71,8 @@ enum Errors: Error, LocalizedError {
             return "Please add a name for this folder"
         case .folderNameInbox:
             return "'Inbox' is a reserved folder name. Please choose another name"
+        case .clearingCoreData:
+            return "Unable to clear Core Data. Please log out and try again"
         }
     }
 }
