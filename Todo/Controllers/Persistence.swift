@@ -132,6 +132,7 @@ class TodoCoreData {
         case .text: request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
         case .deadline: request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.deadline_, ascending: true)]
         case .priority: request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.priority, ascending: false)]
+        case .smart: request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.smartPriority, ascending: true)]
         }
         
         return request

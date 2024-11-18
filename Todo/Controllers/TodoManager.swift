@@ -20,11 +20,21 @@ struct Todo: Codable {
     let createdAt: Date
     
     var smartPriority: Double {
-        let difference = self.deadline.timeIntervalSinceNow
+        var difference = self.deadline.timeIntervalSinceNow
         let coefficient = Double(self.priority) + 2
         
-        if difference >= 0 { return difference / coefficient }
-        else { return difference * coefficient }
+        let compareToToday = Calendar.current.compare(deadline, to: .now, toGranularity: .day)
+        
+        if compareToToday == .orderedSame {
+            difference = abs(difference)
+        }
+        
+        if difference >= 0 {
+            return difference / coefficient
+        }
+        else {
+            return difference * coefficient
+        }
     }
     
     init(deadline: Date, text: String, folderId: String, priority: Int = 0, description: String = "", startDate: Date? = nil, id: String? = nil, isDone: Bool = false, createdAt: Date = Date()) {
@@ -59,6 +69,7 @@ struct Todo: Codable {
         case deadline = "deadline"
         case text = "text"
         case priority = "priority"
+        case smart = "smart"
     }
     
     static func validate(text: String, deadline: Date, startDate: Date? = nil, createdAt: Date) throws {
