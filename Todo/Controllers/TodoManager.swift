@@ -75,11 +75,11 @@ struct Todo: Codable {
     static func validate(text: String, deadline: Date, startDate: Date? = nil, createdAt: Date) throws {
         guard !text.isEmpty else { throw Errors.todoText }
         
-        let compareToCreateDate = Calendar.current.compare(deadline, to: createdAt, toGranularity: .day)
+        let compareToCreateDate = Calendar.current.compare(deadline, to: createdAt, toGranularity: .minute)
         if compareToCreateDate == .orderedAscending { throw Errors.todoDeadline }
         
         if startDate != nil {
-            let compareResult = Calendar.current.compare(deadline, to: startDate ?? .now, toGranularity: .day)
+            let compareResult = Calendar.current.compare(deadline, to: startDate ?? .now, toGranularity: .minute)
             if compareResult != .orderedDescending { throw Errors.todoDeadline }
         }
     }

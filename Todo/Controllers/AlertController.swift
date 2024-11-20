@@ -66,7 +66,7 @@ enum Errors: Error, LocalizedError {
         case .todoText:
             return "Please add text for this todo item"
         case .todoDeadline:
-            return "The deadline cannot be in the past or earlier than the start date"
+            return "The deadline cannot be in the past or same time as a start date. Please choose a different date"
         case .folderName:
             return "Please add a name for this folder"
         case .folderNameInbox:

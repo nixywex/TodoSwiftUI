@@ -36,7 +36,7 @@ struct TodoDetailsView: View {
                                 vm.todoStartDate = newValue
                             }),
                             in: ...vm.todoDeadline,
-                            displayedComponents: [.date]
+                            displayedComponents: [.date, .hourAndMinute]
                         )
                         .disabled(vm.isStartDateOn ? false : true)
                         .opacity(vm.isStartDateOn ? 1 : 0.3)
@@ -47,7 +47,7 @@ struct TodoDetailsView: View {
                             "Do due",
                             selection: $vm.todoDeadline,
                             in: vm.todoDeadline < Date() ? vm.todoDeadline... : Date()...,
-                            displayedComponents: [.date]
+                            displayedComponents: [.date, .hourAndMinute]
                         )
                     }
                 }

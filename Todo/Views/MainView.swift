@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MainView: View {
-    @State private var isLoginViewPresented: Bool = false
+    @StateObject var vm = MainViewModel()
     
     var body: some View {
         TabView {
@@ -24,19 +24,55 @@ struct MainView: View {
                     Text("Folders")
                 }
             
-            ProfileView(isLoginViewPresented: $isLoginViewPresented)
+            ProfileView(isLoginViewPresented: $vm.isLoginViewPresented)
                 .tabItem {
                     Image(systemName: "person")
                     Text("Profile")
                 }
         }
         .onAppear {
+            Task {
+                await vm.fetch()
+            }
             let user = AuthManager.shared.user
-            self.isLoginViewPresented = user != nil
+            self.vm.isLoginViewPresented = user != nil
         }
-        .fullScreenCover(isPresented: $isLoginViewPresented) {
+        .fullScreenCover(isPresented: $vm.isLoginViewPresented) {
             NavigationStack {
-                LoginView(isLoginViewPresented: $isLoginViewPresented)
+                LoginView(isLoginViewPresented: $vm.isLoginViewPresented)
+            }
+        }
+        .alert(vm.alert?.title ?? "Warning", isPresented: $vm.isAlertPresented) {
+            vm.alert?.getCancelButton(cancel: { vm.alert = nil })
+        } message: {
+            Text(vm.alert?.message ?? "")
+        }
+    }
+}
+
+final class MainViewModel: ObservableObject {
+    @Published var alert: TodoAlert?
+    @Published var isAlertPresented: Bool = false
+    @Published var isLoginViewPresented: Bool = false
+    
+    func fetch() async {
+        do {
+            try CoreDataManager.shared.clear()
+            _ = try await AuthManager.shared.fetchAuthUser()
+            let todosFirebase = AuthManager.shared.user?.todos ?? []
+            let foldersFirebase = AuthManager.shared.user?.folders ?? []
+            
+            todosFirebase.forEach { todo in
+                TodoCoreData.add(todo: todo)
+            }
+            
+            foldersFirebase.forEach { folder in
+                FolderCoreData.add(folder: folder)
+            }
+        } catch {
+            DispatchQueue.main.async {
+                self.alert = TodoAlert(error: error)
+                self.isAlertPresented = true
             }
         }
     }

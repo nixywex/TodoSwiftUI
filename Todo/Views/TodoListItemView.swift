@@ -31,11 +31,10 @@ struct TodoListItemView: View {
                 Text(self.todo.text)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundStyle(todo.isDone ? .gray : colorScheme == .dark ? .white : .black)
-                Text((todo.startDate == nil ? todo.deadline.prettyDate() :
-                        "\(todo.startDate?.prettyDate() ?? "") - \(todo.deadline.prettyDate())") + "\(folderName == nil ? "" : " • " + (folderName ?? ""))")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .fontWeight(.light)
-                .foregroundStyle(todo.isDone ? .secondary : vm.getDeadlineColor(deadline: todo.deadline))
+                Text(vm.getSubtitle(deadline: todo.deadline, startDate: todo.startDate, folderName: folderName))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fontWeight(.light)
+                    .foregroundStyle(todo.isDone ? .secondary : vm.getDeadlineColor(deadline: todo.deadline))
             }
             .padding(.horizontal, 0)
             .padding(.top, 5)
@@ -123,6 +122,25 @@ final class TodoListItemViewModel: ObservableObject {
         if result == .orderedAscending { return .red }
         else if result == .orderedSame { return .orange }
         return .secondary
+    }
+    
+    func getSubtitle(deadline: Date, startDate: Date?, folderName: String?) -> String {
+        var string = ""
+        
+        if let startDate = startDate {
+            let compareResult = Calendar.current.compare(deadline, to: startDate, toGranularity: .day)
+            if compareResult != .orderedSame {
+                string += "\(startDate.prettyDate()) - "
+            }
+        }
+        
+        string += deadline.prettyDate()
+        
+        if let folderName = folderName {
+            string += " • \(folderName)"
+        }
+        
+        return string
     }
 }
 
