@@ -28,6 +28,7 @@ final class NewTodoViewModel: ObservableObject {
             try Todo.validate(text: text, deadline: deadline, startDate: startDate, createdAt: Date())
             let todo = Todo(deadline: deadline, text: text, folderId: folder.folderId, priority: priority.rawValue, description: description, startDate: startDate)
             TodoCoreData.add(todo: todo)
+            try FolderCoreData.updateNumberOfActiveTodos(inFolderWithId: folder.folderId, value: 1)
         } catch {
             self.alert = TodoAlert(error: error)
             self.isAlertPresented = true

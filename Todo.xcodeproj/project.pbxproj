@@ -19,6 +19,7 @@
 		F0267DB52C808905001C2FEB /* FolderDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DB42C808905001C2FEB /* FolderDetailsView.swift */; };
 		F0267DB82C808A59001C2FEB /* FolderDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DB72C808A59001C2FEB /* FolderDetailsViewModel.swift */; };
 		F0267DBA2C808D50001C2FEB /* AlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0267DB92C808D50001C2FEB /* AlertController.swift */; };
+		F02CFE782CF26A6E004ADDCA /* TodosForEachView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02CFE772CF26A6E004ADDCA /* TodosForEachView.swift */; };
 		F04777B22C73909600A3C7FA /* PreviewExtentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04777B12C73909600A3C7FA /* PreviewExtentions.swift */; };
 		F04777B42C73984000A3C7FA /* TodoListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04777B32C73984000A3C7FA /* TodoListItemView.swift */; };
 		F04E4AA82CCD0B8E00D931CF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F04E4AA72CCD0B8E00D931CF /* FirebaseFirestore */; };
@@ -61,6 +62,7 @@
 		F0267DB42C808905001C2FEB /* FolderDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderDetailsView.swift; sourceTree = "<group>"; };
 		F0267DB72C808A59001C2FEB /* FolderDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderDetailsViewModel.swift; sourceTree = "<group>"; };
 		F0267DB92C808D50001C2FEB /* AlertController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertController.swift; sourceTree = "<group>"; };
+		F02CFE772CF26A6E004ADDCA /* TodosForEachView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodosForEachView.swift; sourceTree = "<group>"; };
 		F04777B12C73909600A3C7FA /* PreviewExtentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewExtentions.swift; sourceTree = "<group>"; };
 		F04777B32C73984000A3C7FA /* TodoListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListItemView.swift; sourceTree = "<group>"; };
 		F04E4AA92CCD0FBB00D931CF /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
@@ -200,6 +202,7 @@
 				F08FFC4D2C7379780011A378 /* NewTodo */,
 				F00FCBB72C73CBD200F45A30 /* TodoDetails */,
 				F0267DAB2C7FBFF2001C2FEB /* FoldersView.swift */,
+				F02CFE772CF26A6E004ADDCA /* TodosForEachView.swift */,
 				F0267DAD2C7FC37F001C2FEB /* FolderListItemView.swift */,
 				F00FCBBC2C74E88D00F45A30 /* TodosListSectionView.swift */,
 				F0774FCC2C986A7C00A9CA07 /* MainView.swift */,
@@ -344,6 +347,7 @@
 				F0D684D02CCBE5A2003DB0B1 /* LoginView.swift in Sources */,
 				F08FD5362CE13F4900533AF0 /* TodoDataModel.xcdatamodeld in Sources */,
 				F0267DB12C808281001C2FEB /* EntitiesExtentions.swift in Sources */,
+				F02CFE782CF26A6E004ADDCA /* TodosForEachView.swift in Sources */,
 				F0774FCD2C986A7C00A9CA07 /* MainView.swift in Sources */,
 				F0D684E12CCBF6A1003DB0B1 /* ProfileViewModel.swift in Sources */,
 				F0267DAE2C7FC37F001C2FEB /* FolderListItemView.swift in Sources */,

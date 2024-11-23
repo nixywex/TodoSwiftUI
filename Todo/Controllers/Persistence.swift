@@ -100,6 +100,15 @@ class TodoCoreData {
         return request
     }()
     
+    static private func getSortDescription(sortType: Todo.SortType) -> [NSSortDescriptor] {
+        switch sortType {
+        case .text: return [NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
+        case .deadline: return [NSSortDescriptor(keyPath: \TodoEntity.deadline_, ascending: true)]
+        case .priority: return  [NSSortDescriptor(keyPath: \TodoEntity.priority, ascending: false)]
+        case .smart: return [NSSortDescriptor(keyPath: \TodoEntity.smartPriority, ascending: true)]
+        }
+    }
+    
     static func add(todo: Todo, context: NSManagedObjectContext = CoreDataManager.shared.persistanceContainer.viewContext) {
         let newCDTodo = TodoEntity(context: context)
         newCDTodo.text_ = todo.text
@@ -127,13 +136,22 @@ class TodoCoreData {
     static func getRequest(isDone: Bool, sortType: Todo.SortType = .deadline, folder: FolderEntity) -> NSFetchRequest<TodoEntity> {
         let request = TodoEntity.fetchRequest()
         request.predicate = NSPredicate(format: "isDone == %@ AND folderId_ == %@", NSNumber(value: isDone), folder.folderId)
+        request.sortDescriptors = getSortDescription(sortType: sortType)
+        return request
+    }
+    
+    static func getSearchRequest(search: String, isDone: Bool = false, sortType: Todo.SortType = .deadline, folder: FolderEntity? = nil) -> NSFetchRequest<TodoEntity> {
+        let request = TodoEntity.fetchRequest()
         
-        switch sortType {
-        case .text: request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.text_, ascending: true)]
-        case .deadline: request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.deadline_, ascending: true)]
-        case .priority: request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.priority, ascending: false)]
-        case .smart: request.sortDescriptors = [NSSortDescriptor(keyPath: \TodoEntity.smartPriority, ascending: true)]
+        if !search.isEmpty {
+            if let folderId = folder?.folderId {
+                request.predicate = NSPredicate(format: "isDone == %@ AND text_ CONTAINS[cd] %@ AND folderId_ == %@", NSNumber(value: isDone), search, folderId)
+            } else {
+                request.predicate = NSPredicate(format: "isDone == %@ AND text_ CONTAINS[cd] %@", NSNumber(value: isDone), search)
+            }
         }
+        
+        request.sortDescriptors = getSortDescription(sortType: sortType)
         
         return request
     }

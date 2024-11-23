@@ -21,13 +21,7 @@ struct TodosListSectionView: View {
     
     var body: some View {
         Section("\(isDoneSection ? "Completed" : "Current") todos", isExpanded: $isSectionExpanded) {
-            ForEach(todos, id: \.todoId) { todo in
-                NavigationLink(destination: {
-                    TodoDetailsView(vm: TodoDetailsViewModel(todo: todo))
-                }) {
-                    TodoListItemView(todo: todo)
-                }
-            }
+            TodosForEachView(todos: todos)
         }
     }
 }

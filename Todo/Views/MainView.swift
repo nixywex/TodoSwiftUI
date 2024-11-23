@@ -12,7 +12,8 @@ struct MainView: View {
     
     var body: some View {
         TabView {
-            HomeView()
+            HomeView(searchTerm: vm.searchTerm)
+                .searchable(text: $vm.searchTerm, placement: .navigationBarDrawer, prompt: "Search todos")
                 .tabItem {
                     Image(systemName: "house")
                     Text("Home")
@@ -54,6 +55,8 @@ final class MainViewModel: ObservableObject {
     @Published var alert: TodoAlert?
     @Published var isAlertPresented: Bool = false
     @Published var isLoginViewPresented: Bool = false
+    @Published var searchTerm = ""
+
     
     func fetch() async {
         do {
